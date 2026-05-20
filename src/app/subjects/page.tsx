@@ -1,12 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { supabase } from "@/lib/supabase"
 
-export default function SubjectsPage() {
-
+function SubjectsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -47,7 +46,6 @@ export default function SubjectsPage() {
         </button>
 
         <div>
-
           <h1 className="text-4xl font-bold">
             Select Subject
           </h1>
@@ -55,7 +53,6 @@ export default function SubjectsPage() {
           <p className="text-purple-400 tracking-[4px] mt-1">
             {courseName}
           </p>
-
         </div>
 
       </div>
@@ -74,27 +71,22 @@ export default function SubjectsPage() {
 
               <div className="flex items-center gap-4">
 
-                {/* Thumbnail */}
                 <div className="w-20 h-20 bg-zinc-800 rounded-2xl flex items-center justify-center">
                   📘
                 </div>
 
-                {/* Info */}
                 <div>
-
                   <h2 className="text-2xl font-bold">
                     {item.subject}
                   </h2>
 
                   <p className="text-zinc-400 mt-1">
-                    Explore Modules
+                    Explore Chapters
                   </p>
-
                 </div>
 
               </div>
 
-              {/* Arrow */}
               <div className="text-3xl text-zinc-500">
                 ›
               </div>
@@ -108,5 +100,13 @@ export default function SubjectsPage() {
       </div>
 
     </main>
+  )
+}
+
+export default function SubjectsPage() {
+  return (
+    <Suspense fallback={<div className="text-white p-10">Loading...</div>}>
+      <SubjectsContent />
+    </Suspense>
   )
 }

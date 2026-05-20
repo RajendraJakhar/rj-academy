@@ -1,12 +1,11 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { supabase } from "@/lib/supabase"
 
-export default function ChaptersPage() {
-
+function ChaptersContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -38,9 +37,7 @@ export default function ChaptersPage() {
   return (
     <main className="min-h-screen bg-black text-white p-4">
 
-      {/* Header */}
       <div className="flex items-center gap-4">
-
         <button
           className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl"
           onClick={() => router.back()}
@@ -49,7 +46,6 @@ export default function ChaptersPage() {
         </button>
 
         <div>
-
           <h1 className="text-4xl font-bold">
             {subjectName} Chapters
           </h1>
@@ -57,27 +53,20 @@ export default function ChaptersPage() {
           <p className="text-purple-400 tracking-[4px] mt-1">
             {courseName}
           </p>
-
         </div>
-
       </div>
 
-      {/* Chapters */}
       <div className="mt-10 space-y-5">
-
         {chapters.map((item) => (
-
           <Link
             href={`/lectures?course=${courseName}&subject=${subjectName}&chapter=${item.chapter}`}
             key={item.id}
           >
-
             <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 hover:border-purple-500 transition-all">
 
               <div className="flex items-center justify-between">
 
                 <div>
-
                   <h2 className="text-2xl font-bold">
                     {item.chapter}
                   </h2>
@@ -85,7 +74,6 @@ export default function ChaptersPage() {
                   <p className="text-zinc-400 mt-2">
                     Explore Lectures
                   </p>
-
                 </div>
 
                 <div className="text-4xl text-zinc-500">
@@ -95,13 +83,18 @@ export default function ChaptersPage() {
               </div>
 
             </div>
-
           </Link>
-
         ))}
-
       </div>
 
     </main>
+  )
+}
+
+export default function ChaptersPage() {
+  return (
+    <Suspense fallback={<div className="text-white p-10">Loading...</div>}>
+      <ChaptersContent />
+    </Suspense>
   )
 }

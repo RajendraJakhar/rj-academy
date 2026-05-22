@@ -2,18 +2,32 @@
 
 import Link from "next/link"
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import Sidebar from "../components/Sidebar"
-import BottomNav from "../components/BottomNav"
 import { supabase } from "@/lib/supabase"
 
 export default function Home() {
+  const router = useRouter()
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const [courses, setCourses] = useState<any[]>([])
+  const [search, setSearch] = useState("")
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchCourses()
+    checkUser()
   }, [])
+
+  const checkUser = async () => {
+    const { data } = await supabase.auth.getSession()
+
+    if (!data.session) {
+      router.push("/login")
+    } else {
+      fetchCourses()
+      setLoading(false)
+    }
+  }
 
   const fetchCourses = async () => {
     const { data, error } = await supabase
@@ -23,8 +37,20 @@ export default function Home() {
     if (error) {
       console.log(error)
     } else {
-      setCourses(data)
+      setCourses(data || [])
     }
+  }
+
+  const filteredCourses = courses.filter((course) =>
+    course.title.toLowerCase().includes(search.toLowerCase())
+  )
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center">
+        Loading...
+      </main>
+    )
   }
 
   return (
@@ -36,19 +62,19 @@ export default function Home() {
       />
 
       {/* Navbar */}
-      <nav className="flex items-center justify-between p-4 border-b border-zinc-800 sticky top-0 bg-black/80 backdrop-blur-md z-50">
+      <nav className="flex items-center justify-between p-1 border-b border-zinc-800 sticky top-0 bg-black/90 backdrop-blur-md z-50">
 
         {/* Left */}
         <button
           onClick={() => setIsSidebarOpen(true)}
-          className="bg-zinc-900 p-3 rounded-2xl border border-zinc-700"
+          className="bg-zinc-900 p-3 rounded-2xl border border-zinc-700 text-white text-xl"
         >
           ☰
         </button>
 
         {/* Center */}
-        <div>
-          <h1 className="text-xl font-bold text-purple-400">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-purple-400">
             RJ Academy
           </h1>
 
@@ -71,6 +97,8 @@ export default function Home() {
         <input
           type="text"
           placeholder="Search your batch..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
           className="w-full bg-zinc-900 border border-purple-500 rounded-2xl p-4 outline-none mt-4"
         />
 
@@ -90,7 +118,7 @@ export default function Home() {
         {/* Dynamic Courses */}
         <div className="mt-6 space-y-6">
 
-          {courses.map((course) => (
+          {filteredCourses.map((course) => (
 
             <div
               key={course.id}
@@ -113,12 +141,10 @@ export default function Home() {
                   {course.subtitle || "Premium Course"}
                 </p>
 
-               <Link href={`/subjects?course=${course.title}`}>       
-
+                <Link href={`/subjects?course=${course.title}`}>
                   <button className="mt-4 w-full bg-purple-600 hover:bg-purple-700 transition-all p-3 rounded-2xl font-bold">
                     Explore Course
                   </button>
-
                 </Link>
 
               </div>
@@ -130,8 +156,6 @@ export default function Home() {
         </div>
 
       </div>
-
-      <BottomNav />
 
     </main>
   )

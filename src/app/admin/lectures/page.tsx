@@ -1,9 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 
 export default function AdminLecturesPage() {
+  const router = useRouter()
 
   const [course, setCourse] = useState("")
   const [subject, setSubject] = useState("")
@@ -46,7 +48,7 @@ export default function AdminLecturesPage() {
     if (error) {
       console.log(error)
     } else {
-      setCourses(data)
+      setCourses(data || [])
     }
   }
 
@@ -59,7 +61,7 @@ export default function AdminLecturesPage() {
     if (error) {
       console.log(error)
     } else {
-      setSubjects(data)
+      setSubjects(data || [])
     }
   }
 
@@ -73,12 +75,11 @@ export default function AdminLecturesPage() {
     if (error) {
       console.log(error)
     } else {
-      setChapters(data)
+      setChapters(data || [])
     }
   }
 
   const handleSave = async () => {
-
     if (
       !course ||
       !subject ||
@@ -125,25 +126,44 @@ export default function AdminLecturesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-4">
+    <main className="min-h-screen bg-black text-white p-4 max-w-md mx-auto relative overflow-hidden">
 
-      <h1 className="text-4xl font-bold text-purple-400">
-        Add Lecture
-      </h1>
+      {/* Background Glow */}
+      <div className="absolute top-0 right-0 w-72 h-72 bg-purple-600 blur-[120px] opacity-10 rounded-full"></div>
 
-      <p className="text-zinc-400 mt-2">
-        Add lecture inside chapter
-      </p>
+      {/* Premium Header */}
+      <div className="relative flex items-center gap-4 mb-8 sticky top-0 bg-black/90 backdrop-blur-md py-3 z-50">
 
-      <div className="mt-10 space-y-5">
+        {/* Premium Back Button */}
+        <button
+          onClick={() => router.back()}
+          className="w-14 h-14 flex items-center justify-center bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700 rounded-2xl text-2xl shadow-lg hover:border-purple-500 transition-all"
+        >
+          ←
+        </button>
+
+        <div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+            Add Lecture
+          </h1>
+
+          <p className="text-zinc-400 text-sm mt-1">
+            Add lecture inside chapter
+          </p>
+        </div>
+
+      </div>
+
+      {/* Form Card */}
+      <div className="bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700 rounded-3xl p-5 shadow-lg space-y-5">
 
         {/* Course */}
         <select
           value={course}
           onChange={(e) => setCourse(e.target.value)}
-          className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4"
+          className="w-full bg-black border border-zinc-700 rounded-2xl p-4 outline-none text-white"
         >
-          <option value="">Select Course</option>
+          <option value="">📚 Select Course</option>
 
           {courses.map((item) => (
             <option key={item.id} value={item.title}>
@@ -156,9 +176,9 @@ export default function AdminLecturesPage() {
         <select
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
-          className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4"
+          className="w-full bg-black border border-zinc-700 rounded-2xl p-4 outline-none text-white"
         >
-          <option value="">Select Subject</option>
+          <option value="">📘 Select Subject</option>
 
           {subjects.map((item) => (
             <option key={item.id} value={item.subject}>
@@ -171,9 +191,9 @@ export default function AdminLecturesPage() {
         <select
           value={chapter}
           onChange={(e) => setChapter(e.target.value)}
-          className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4"
+          className="w-full bg-black border border-zinc-700 rounded-2xl p-4 outline-none text-white"
         >
-          <option value="">Select Chapter</option>
+          <option value="">📖 Select Chapter</option>
 
           {chapters.map((item) => (
             <option key={item.id} value={item.chapter}>
@@ -185,66 +205,73 @@ export default function AdminLecturesPage() {
         {/* Lecture No */}
         <input
           type="number"
-          placeholder="Lecture Number (1,2,3...)"
+          placeholder="🎥 Lecture Number (1,2,3...)"
           value={lectureNo}
           onChange={(e) => setLectureNo(e.target.value)}
-          className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4"
+          className="w-full bg-black border border-zinc-700 rounded-2xl p-4 outline-none text-white"
         />
 
         {/* Lecture Title */}
         <input
           type="text"
-          placeholder="Lecture Title"
+          placeholder="📝 Lecture Title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4"
+          className="w-full bg-black border border-zinc-700 rounded-2xl p-4 outline-none text-white"
         />
 
         {/* Video URL */}
         <input
           type="text"
-          placeholder="Video URL"
+          placeholder="▶ Video URL"
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
-          className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4"
+          className="w-full bg-black border border-zinc-700 rounded-2xl p-4 outline-none text-white"
         />
 
         {/* PDF URL */}
         <input
           type="text"
-          placeholder="PDF URL (optional)"
+          placeholder="📄 PDF URL (optional)"
           value={pdfUrl}
           onChange={(e) => setPdfUrl(e.target.value)}
-          className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4"
+          className="w-full bg-black border border-zinc-700 rounded-2xl p-4 outline-none text-white"
         />
 
         {/* Thumbnail */}
         <input
           type="text"
-          placeholder="Thumbnail URL (optional)"
+          placeholder="🖼 Thumbnail URL (optional)"
           value={thumbnail}
           onChange={(e) => setThumbnail(e.target.value)}
-          className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-4"
+          className="w-full bg-black border border-zinc-700 rounded-2xl p-4 outline-none text-white"
         />
 
-        {/* Preview */}
+        {/* Thumbnail Preview */}
         {thumbnail && (
-          <img
-            src={thumbnail}
-            alt="preview"
-            className="w-full h-56 object-cover rounded-3xl"
-          />
+          <div className="rounded-3xl overflow-hidden border border-zinc-700">
+            <img
+              src={thumbnail}
+              alt="preview"
+              className="w-full h-48 object-cover"
+            />
+          </div>
         )}
 
-        {/* Save */}
+        {/* Save Button */}
         <button
           onClick={handleSave}
-          className="w-full bg-purple-600 hover:bg-purple-700 p-4 rounded-2xl font-bold"
+          className="w-full bg-gradient-to-r from-purple-600 to-pink-500 hover:opacity-90 transition-all p-4 rounded-2xl font-bold text-lg shadow-lg"
         >
-          Save Lecture
+          Save Lecture 😈🔥
         </button>
 
       </div>
+
+      {/* Footer */}
+      <p className="text-center text-zinc-500 text-xs mt-8">
+        RJ Academy • Premium Admin Lecture Panel
+      </p>
 
     </main>
   )

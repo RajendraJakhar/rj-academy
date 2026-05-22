@@ -28,76 +28,99 @@ function SubjectsContent() {
     if (error) {
       console.log(error)
     } else {
-      setSubjects(data)
+      setSubjects(data || [])
     }
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-4">
+    <main className="min-h-screen bg-black text-white p-4 max-w-md mx-auto relative overflow-hidden">
 
-      {/* Header */}
-      <div className="flex items-center gap-4">
+      {/* Background Glow */}
+      <div className="absolute top-0 left-0 w-72 h-72 bg-purple-600 blur-[120px] opacity-10 rounded-full"></div>
 
+      {/* Premium Header */}
+      <div className="relative flex items-center gap-4 mb-8 sticky top-0 bg-black/90 backdrop-blur-md py-3 z-50">
+
+        {/* Premium Back Button */}
         <button
           onClick={() => router.back()}
-          className="bg-zinc-900 border border-zinc-800 p-4 rounded-2xl"
+          className="w-14 h-14 flex items-center justify-center bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700 rounded-2xl text-2xl shadow-lg hover:border-purple-500 transition-all"
         >
           ←
         </button>
 
+        {/* Title */}
         <div>
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
             Select Subject
           </h1>
 
-          <p className="text-purple-400 tracking-[4px] mt-1">
-            {courseName}
+          <p className="text-blue-400 tracking-[3px] text-xs mt-1 font-semibold">
+            {courseName?.toUpperCase()}
           </p>
         </div>
 
       </div>
 
       {/* Subject Cards */}
-      <div className="mt-10 space-y-5">
+      <div className="px-1">
 
-        {subjects.map((item) => (
+        {subjects.length === 0 ? (
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 text-center text-zinc-400">
+            No Subjects Found 😭
+          </div>
+        ) : (
+          subjects.map((item) => (
 
-          <Link
-            href={`/chapters?course=${courseName}&subject=${item.subject}`}
-            key={item.id}
-          >
+            <Link
+              href={`/chapters?course=${courseName}&subject=${item.subject}`}
+              key={item.id}
+              className="block mb-4"
+            >
+              <div className="bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700 hover:border-purple-500 transition-all rounded-3xl px-4 py-4 shadow-lg">
 
-            <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5 flex items-center justify-between hover:border-purple-500 transition-all">
+                <div className="flex items-center justify-between">
 
-              <div className="flex items-center gap-4">
+                  {/* Left */}
+                  <div className="flex items-center gap-4">
 
-                <div className="w-20 h-20 bg-zinc-800 rounded-2xl flex items-center justify-center">
-                  📘
-                </div>
+                    {/* Icon Box */}
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center text-2xl shadow-md">
+                      📘
+                    </div>
 
-                <div>
-                  <h2 className="text-2xl font-bold">
-                    {item.subject}
-                  </h2>
+                    {/* Text */}
+                    <div>
+                      <h2 className="text-xl font-bold text-white leading-tight">
+                        {item.subject}
+                      </h2>
 
-                  <p className="text-zinc-400 mt-1">
-                    Explore Chapters
-                  </p>
+                      <p className="text-zinc-400 text-sm mt-1">
+                        Explore Chapters
+                      </p>
+                    </div>
+
+                  </div>
+
+                  {/* Arrow */}
+                  <div className="text-2xl text-purple-400 font-bold">
+                    ›
+                  </div>
+
                 </div>
 
               </div>
+            </Link>
 
-              <div className="text-3xl text-zinc-500">
-                ›
-              </div>
-
-            </div>
-
-          </Link>
-
-        ))}
+          ))
+        )}
 
       </div>
+
+      {/* Footer */}
+      <p className="text-center text-zinc-500 text-xs mt-8">
+        RJ Academy • Premium Subject Access
+      </p>
 
     </main>
   )

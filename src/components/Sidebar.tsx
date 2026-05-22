@@ -44,10 +44,23 @@ export default function Sidebar({
 
             <div className="flex items-center gap-4">
 
-              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center text-2xl font-bold shadow-lg">
-                RJ
-              </div>
+              {/* Profile Image */}
+              <div className="relative w-16 h-16 flex-shrink-0">
 
+                <div className="absolute inset-0 rounded-full bg-purple-600 blur-xl opacity-30"></div>
+
+                <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-purple-200 shadow-[0_0_1px_#a855f7]">
+
+                  <img
+                    src="/images/profile.jpg"
+                    alt="Rajendra Profile"
+                    className="w-full h-full object-cover"
+                  />
+
+                </div>
+
+              </div>
+          
               <div>
                 <h2 className="text-2xl font-bold text-white">
                   Rajendra Jakhar
@@ -62,7 +75,7 @@ export default function Sidebar({
 
             {/* Developer Button */}
             <Link href="/developer" onClick={onClose}>
-              <button className="w-full mt-6 bg-zinc-900 hover:bg-zinc-800 transition-all py-4 rounded-2xl font-bold text-lg">
+              <button className="w-full mt-4 bg-zinc-900 hover:bg-zinc-800 transition-all py-4 rounded-2xl font-bold text-lg">
                 View Developer Profile
               </button>
             </Link>
@@ -70,25 +83,33 @@ export default function Sidebar({
           </div>
 
           {/* Menu */}
-          <div className="flex-1 px-6 py-6">
+          <div className="flex-1 px-4 py-4">
 
             <div className="space-y-1">
 
               {/* WhatsApp */}
-              <button className="w-full flex items-center gap-3 px-3 py-3 rounded-2xl hover:bg-zinc-900 transition-all text-green-500 text-lg font-medium">
+              <Link
+                href="https://whatsapp.com/channel/0029VbDYZFFAjPXOkyYSID3K"
+                target="_blank"
+                onClick={onClose}
+              >
+                <button className="w-full flex items-center gap-2 px-4 py-4 rounded-2xl hover:bg-zinc-900 transition-all text-green-500 text-lg font-medium">
                 <span className="text-2xl w-8 text-center">💬</span>
                 <span>WhatsApp Group</span>
-              </button>
-
+                </button>
+              </Link>
+             
               {/* Report */}
-              <button className="w-full flex items-center gap-3 px-3 py-3 rounded-2xl hover:bg-zinc-900 transition-all text-red-400 text-lg font-medium">
+              <Link href="/report" onClick={onClose}>
+                <button className="w-full flex items-center gap-2 px-4 py-4 rounded-2xl hover:bg-zinc-900 transition-all text-red-400 text-lg font-medium">
                 <span className="text-2xl w-8 text-center">🚨</span>
                 <span>Report Problem</span>
               </button>
+              </Link>
 
               {/* Admin */}
               <Link href="/admin" onClick={onClose}>
-                <button className="w-full flex items-center gap-3 px-3 py-3 rounded-2xl hover:bg-zinc-900 transition-all text-blue-400 text-lg font-medium">
+                <button className="w-full flex items-center gap-2 px-3 py-3 rounded-2xl hover:bg-zinc-900 transition-all text-blue-400 text-lg font-medium">
                   <span className="text-2xl w-8 text-center">👑</span>
                   <span>Admin Panel</span>
                 </button>
@@ -96,7 +117,7 @@ export default function Sidebar({
 
               {/* Developer */}
               <Link href="/developer" onClick={onClose}>
-                <button className="w-full flex items-center gap-3 px-3 py-3 rounded-2xl hover:bg-zinc-900 transition-all text-purple-400 text-lg font-medium">
+                <button className="w-full flex items-center gap-2 px-3 py-3 rounded-2xl hover:bg-zinc-900 transition-all text-purple-400 text-lg font-medium">
                   <span className="text-2xl w-8 text-center">💀</span>
                   <span>Developer Info</span>
                 </button>
@@ -107,19 +128,29 @@ export default function Sidebar({
           </div>
 
           {/* Footer */}
-          <div className="p-6 border-t border-zinc-800">
+          <div className="p-3 border-t border-zinc-800">
 
             <button
               onClick={handleLogout}
-              className="w-full bg-gradient-to-r from-red-500 to-pink-500 hover:opacity-90 transition-all py-4 rounded-2xl font-bold text-lg shadow-lg"
+              className="px-17 mx-auto block bg-gradient-to-r from-red-500 to-pink-500 hover:opacity-90 transition-all py-3.5 rounded-2xl font-bold text-lg shadow-lg"
             >
               <span >Logout</span>
             </button>
 
-            <p className="text-center text-zinc-500 text-sm mt-5">
-              Rajendra Jakhar
-            </p>
+            <div className="mt-6 text-center">
+              <div className="inline-block px-5 py-3 rounded-2xl bg-gradient-to-r from-zinc-900 to-black border border-zinc-800 shadow-xl">
 
+                <p className="text-xs text-gray-400 tracking-widest uppercase">
+                Team RJ Academy
+                </p>
+
+                <p className="text-sm font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent mt-1">
+                 Rajendra Jakhar ✦ Piyush Chouhan
+                </p>
+
+              </div>
+            </div>
+            
           </div>
 
         </div>

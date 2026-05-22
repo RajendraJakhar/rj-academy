@@ -21,9 +21,9 @@ function PlayerContent() {
         {/* Premium Back Button */}
         <button
           onClick={() => router.back()}
-          className="w-14 h-14 flex items-center justify-center bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700 rounded-2xl text-2xl shadow-lg hover:border-purple-500 transition-all"
+          className="w-14 h-14 flex items-center justify-center bg-zinc-900 border border-zinc-700 rounded-2xl text-3xl font-extrabold shadow-lg hover:border-purple-500 transition-all"
         >
-          ←
+          ⟵
         </button>
 
         {/* Title */}
@@ -74,4 +74,18 @@ function PlayerContent() {
             ● LIVE ACCESS
           </div>
 
-          <
+        </div>
+
+      </div>
+
+    </main>
+  )
+}
+
+export default function PlayerPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PlayerContent />
+    </Suspense>
+  )
+}

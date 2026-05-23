@@ -27,18 +27,22 @@ function ChaptersContent() {
     const { data, error } = await supabase
       .from("chapters")
       .select("*")
-      .eq("course", courseName)
-      .eq("subject", subjectName)
+      
+        if (error) {
+    console.log(error)
+  } else {
+    const filteredData = data?.filter(
+      (item) =>
+        item.course?.trim().toLowerCase() === courseName?.trim().toLowerCase() &&
+        item.subject?.trim().toLowerCase() === subjectName?.trim().toLowerCase()
+    )
 
-    if (error) {
-      console.log(error)
-    } else {
-      setChapters(data || [])
-    }
-
-    setLoading(false)
+    setChapters(filteredData || [])
   }
 
+  setLoading(false)
+}
+      
   return (
     <main className="min-h-screen bg-black text-white p-4 max-w-md mx-auto relative overflow-hidden overflow-x-hidden w-screen">
 

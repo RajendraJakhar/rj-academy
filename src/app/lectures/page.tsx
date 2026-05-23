@@ -25,16 +25,18 @@ function LecturesContent() {
     const { data, error } = await supabase
       .from("lectures")
       .select("*")
-      .eq("course", courseName?.trim())
-      .eq("subject", subjectName?.trim())
-      .eq("chapter", chapterName?.trim())
-      .order("lecture_number", { ascending: true })
 
     if (error) {
       console.log(error)
     } else {
-      console.log("Lectures:", data)
-      setLectures(data || [])
+      const filteredData = data?.filter(
+        (item) =>
+          item.course?.trim().toLowerCase() === courseName?.trim().toLowerCase() &&
+          item.subject?.trim().toLowerCase() === subjectName?.trim().toLowerCase() &&
+          item.chapter?.trim().toLowerCase() === chapterName?.trim().toLowerCase()
+      )
+
+      setLectures(filteredData || [])
     }
   }
 
@@ -72,7 +74,7 @@ function LecturesContent() {
 
         {lectures.length === 0 ? (
           <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 text-center text-zinc-400">
-            No Lectures Found 
+            No Lectures Found
           </div>
         ) : (
           lectures.map((item) => (
@@ -120,17 +122,14 @@ function LecturesContent() {
                 <div className="mt-4 grid grid-cols-2 gap-3">
 
                   <Link
-                     href={`/player?video=${encodeURIComponent(
-                      item.video_url.replace("/view?usp=drive_link", "/preview")
-                     )}`}
-                    
+                    href={`/player?video=${encodeURIComponent(item.video_url)}`}
                   >
                     <button className="w-full bg-purple-600 hover:bg-purple-700 transition-all p-3 rounded-2xl font-bold text-sm shadow-lg">
                       ▶ Watch
                     </button>
                   </Link>
 
-                  {item.pdf_url ? (
+                  {item.pdf_url && item.pdf_url !== "A" ? (
                     <a
                       href={item.pdf_url}
                       target="_blank"

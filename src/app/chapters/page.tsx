@@ -13,7 +13,7 @@ function ChaptersContent() {
   const subjectName = searchParams.get("subject")
 
   const [chapters, setChapters] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (courseName && subjectName) {
@@ -40,7 +40,7 @@ function ChaptersContent() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-4 max-w-md mx-auto relative overflow-hidden">
+    <main className="min-h-screen bg-black text-white p-4 max-w-md mx-auto relative overflow-hidden overflow-x-hidden w-screen">
 
       {/* Background Glow */}
       <div className="absolute top-0 left-0 w-72 h-72 bg-purple-600 blur-[120px] opacity-10 rounded-full pointer-events-none"></div>
@@ -72,29 +72,7 @@ function ChaptersContent() {
         {/* Chapter Cards */}
         <div className="px-1">
 
-          {/* Premium Skeleton Loading */}
-          {loading ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map((item) => (
-                <div
-                  key={item}
-                  className="animate-pulse flex items-center justify-between bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700 rounded-3xl px-4 py-4 shadow-lg"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-zinc-700"></div>
-
-                    <div>
-                      <div className="h-5 w-32 bg-zinc-700 rounded mb-2"></div>
-                      <div className="h-3 w-24 bg-zinc-800 rounded"></div>
-                    </div>
-                  </div>
-
-                  <div className="h-6 w-6 bg-zinc-700 rounded"></div>
-                </div>
-              ))}
-            </div>
-
-          ) : chapters.length === 0 ? (
+         {chapters.length === 0 ? (
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 text-center text-zinc-400">
               No Chapters Found 😭

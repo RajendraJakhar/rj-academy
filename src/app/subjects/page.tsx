@@ -129,19 +129,15 @@ function SubjectsContent() {
                       </h2>
 
                       <p className="text-zinc-400 text-sm mt-1">
-                        {clickedId === item.id ? "Opening..." : "Explore Chapters"}
+                        "Explore Chapters"
                       </p>
                     </div>
                   </div>
 
                   {/* Right */}
-                  {clickedId === item.id ? (
-                    <div className="animate-spin w-6 h-6 border-2 border-purple-400 border-t-transparent rounded-full"></div>
-                  ) : (
-                    <div className="text-3xl text-purple-400 font-bold group-hover:translate-x-1 transition-all">
-                      ›
-                    </div>
-                  )}
+                  <div className="text-3xl text-purple-400 font-bold group-hover:translate-x-1 transition-all">
+                    ›
+                  </div>
 
                 </div>
               </div>

@@ -14,7 +14,6 @@ function LecturesContent() {
   const chapterName = searchParams.get("chapter")
 
   const [lectures, setLectures] = useState<any[]>([])
-  const [search, setSearch] = useState("")
 
   useEffect(() => {
     if (courseName && subjectName && chapterName) {
@@ -26,20 +25,18 @@ function LecturesContent() {
     const { data, error } = await supabase
       .from("lectures")
       .select("*")
-      .eq("course", courseName)
-      .eq("subject", subjectName)
-      .eq("chapter", chapterName)
+      .eq("course", courseName?.trim())
+      .eq("subject", subjectName?.trim())
+      .eq("chapter", chapterName?.trim())
+      .order("lecture_number", { ascending: true })
 
     if (error) {
       console.log(error)
     } else {
+      console.log("Lectures:", data)
       setLectures(data || [])
     }
   }
-
-  const filteredLectures = lectures.filter((item) =>
-    item.title?.toLowerCase().includes(search.toLowerCase())
-  )
 
   return (
     <main className="min-h-screen bg-black text-white p-4 max-w-md mx-auto relative overflow-hidden">
@@ -50,7 +47,7 @@ function LecturesContent() {
       {/* Premium Header */}
       <div className="relative flex items-center gap-4 mb-8 sticky top-0 bg-black/90 backdrop-blur-md py-3 z-50">
 
-        {/* Premium Back Button */}
+        {/* Back Button */}
         <button
           onClick={() => router.back()}
           className="w-14 h-14 flex items-center justify-center bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700 rounded-2xl text-2xl shadow-lg hover:border-purple-500 transition-all"
@@ -58,37 +55,27 @@ function LecturesContent() {
           ←
         </button>
 
-        {/* Title */}
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
             Recorded Lectures
           </h1>
 
           <p className="text-green-400 text-sm mt-1 font-semibold">
-            ● {filteredLectures.length} CLASSES FOUND
+            ● {lectures.length} CLASSES FOUND
           </p>
         </div>
 
       </div>
 
-      {/* Search */}
-      <input
-        type="text"
-        placeholder="Search class..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="w-full mb-6 bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700 rounded-2xl p-4 outline-none text-white placeholder-zinc-500"
-      />
-
       {/* Lecture Cards */}
       <div>
 
-        {filteredLectures.length === 0 ? (
+        {lectures.length === 0 ? (
           <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 text-center text-zinc-400">
             No Lectures Found 😭
           </div>
         ) : (
-          filteredLectures.map((item) => (
+          lectures.map((item) => (
 
             <div
               key={item.id}
@@ -152,9 +139,9 @@ function LecturesContent() {
                   ) : (
                     <button
                       disabled
-                      className="w-full bg-zinc-800 p-3 rounded-2xl font-bold text-sm text-zinc-500"
+                      className="w-full bg-zinc-800 p-3 rounded-2xl font-bold text-sm text-zinc-500 border border-zinc-700"
                     >
-                      No Notes
+                      📄 No Notes
                     </button>
                   )}
 

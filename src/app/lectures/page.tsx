@@ -39,7 +39,7 @@ function LecturesContent() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-4 max-w-md mx-auto relative overflow-hidden">
+    <main className="min-h-screen bg-black text-white p-4 max-w-md mx-auto relative overflow-hidden overflow-x-hidden w-screen">
 
       {/* Background Glow */}
       <div className="absolute top-0 left-0 w-72 h-72 bg-purple-600 blur-[120px] opacity-10 rounded-full"></div>

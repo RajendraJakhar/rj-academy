@@ -164,7 +164,7 @@ export default function AdminPage() {
 
   /* REAL DASHBOARD */
   return (
-    <main className="min-h-screen bg-black text-white p-4 max-w-md mx-auto">
+    <main className="min-h-screen w-full bg-black text-white p-4 max-w-md mx-auto relative overflow-hidden overflow-x-hidden w-screen">
     
     {/* Premium Header */}
     <div className="relative flex items-center gap-4 mb-8 sticky top-0 bg-black/90 backdrop-blur-md py-3 z-50">

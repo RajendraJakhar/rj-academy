@@ -119,7 +119,7 @@ export default function UsersPage() {
 
         {users.length === 0 ? (
           <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-3xl text-center text-zinc-400">
-            No users found 😭
+            No users found 
           </div>
         ) : (
           users.map((user) => (

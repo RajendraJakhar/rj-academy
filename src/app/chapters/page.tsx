@@ -75,7 +75,7 @@ function ChaptersContent() {
          {chapters.length === 0 ? (
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 text-center text-zinc-400">
-              No Chapters Found 😭
+              No Chapters Found 
             </div>
 
           ) : (

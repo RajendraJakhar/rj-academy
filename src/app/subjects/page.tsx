@@ -102,7 +102,7 @@ function SubjectsContent() {
           ) : subjects.length === 0 ? (
 
             <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 text-center text-zinc-400">
-              No Subjects Found 😭
+              No Subjects Found 
             </div>
 
           ) : (

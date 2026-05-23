@@ -72,7 +72,7 @@ function LecturesContent() {
 
         {lectures.length === 0 ? (
           <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 text-center text-zinc-400">
-            No Lectures Found 😭
+            No Lectures Found 
           </div>
         ) : (
           lectures.map((item) => (
@@ -120,7 +120,10 @@ function LecturesContent() {
                 <div className="mt-4 grid grid-cols-2 gap-3">
 
                   <Link
-                    href={`/player?video=${encodeURIComponent(item.video_url)}`}
+                     href={`/player?video=${encodeURIComponent(
+                      item.video_url.replace("/view?usp=drive_link", "/preview")
+                     )}`}
+                    
                   >
                     <button className="w-full bg-purple-600 hover:bg-purple-700 transition-all p-3 rounded-2xl font-bold text-sm shadow-lg">
                       ▶ Watch

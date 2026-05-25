@@ -7,6 +7,14 @@ import { supabase } from "@/lib/supabase"
 export default function AdminChaptersPage() {
   const router = useRouter()
 
+useEffect(() => {
+  const isAdmin = localStorage.getItem("adminAccess")
+
+  if (isAdmin !== "true") {
+    router.push("/admin")
+  }
+}, [])
+
   const [course, setCourse] = useState("")
   const [subject, setSubject] = useState("")
   const [chapter, setChapter] = useState("")

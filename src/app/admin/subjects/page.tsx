@@ -7,6 +7,15 @@ import { supabase } from "@/lib/supabase"
 export default function AdminSubjectsPage() {
   const router = useRouter()
 
+useEffect(() => {
+  const isAdmin = localStorage.getItem("adminAccess")
+
+  if (isAdmin !== "true") {
+    router.push("/admin")
+  }
+}, [])
+  
+
   const [subject, setSubject] = useState("")
   const [course, setCourse] = useState("")
   const [courses, setCourses] = useState<any[]>([])

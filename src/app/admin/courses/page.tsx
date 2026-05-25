@@ -1,11 +1,19 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 
 export default function AdminCoursesPage() {
   const router = useRouter()
+
+useEffect(() => {
+  const isAdmin = localStorage.getItem("adminAccess")
+
+  if (isAdmin !== "true") {
+    router.push("/admin")
+  }
+}, [])
 
   const [title, setTitle] = useState("")
   const [subtitle, setSubtitle] = useState("")

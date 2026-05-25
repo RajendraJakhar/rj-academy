@@ -20,7 +20,7 @@ export default function AdminPage() {
   const SECRET_PASSWORD = "RJ@Admin2026"
 
   useEffect(() => {
-    const unlocked = localStorage.getItem("adminUnlocked")
+    const unlocked = localStorage.getItem("adminAccess")
 
     if (unlocked === "true") {
       setIsUnlocked(true)
@@ -33,7 +33,7 @@ export default function AdminPage() {
 
   const handleUnlock = () => {
     if (adminPassword === SECRET_PASSWORD) {
-      localStorage.setItem("adminUnlocked", "true")
+      localStorage.setItem("adminAccess", "true")
       setIsUnlocked(true)
     } else {
       alert("Wrong Admin Password 😭")
@@ -121,7 +121,7 @@ export default function AdminPage() {
   }
 
   const handleLogout = async () => {
-    localStorage.removeItem("adminUnlocked")
+    localStorage.removeItem("adminAccess")
     await supabase.auth.signOut()
     window.location.href = "/login"
   }

@@ -10,12 +10,11 @@ function PlayerContent() {
 
   const videoUrl = searchParams.get("video")
 
-  // CONVERT LINKS
   const getEmbedUrl = (url: string) => {
 
     if (!url) return ""
 
-    /* GOOGLE DRIVE */
+    /* Google Drive */
     if (url.includes("drive.google.com")) {
 
       const match = url.match(/\/d\/(.*?)\//)
@@ -28,7 +27,7 @@ function PlayerContent() {
 
     }
 
-    /* YOUTUBE WATCH */
+    /* YouTube watch link */
     if (url.includes("youtube.com/watch?v=")) {
 
       const match = url.match(/v=([^&]+)/)
@@ -41,7 +40,7 @@ function PlayerContent() {
 
     }
 
-    /* YOUTUBE LIVE */
+    /* YouTube live link */
     if (url.includes("youtube.com/live/")) {
 
       const match = url.match(/live\/([^?&]+)/)
@@ -54,7 +53,7 @@ function PlayerContent() {
 
     }
 
-    /* SHORT LINK */
+    /* youtu.be short link */
     if (url.includes("youtu.be/")) {
 
       const match = url.match(/youtu\.be\/([^?&]+)/)
@@ -73,163 +72,75 @@ function PlayerContent() {
 
   return (
 
-    <main className="min-h-screen bg-black text-white relative overflow-hidden">
+    <main className="min-h-screen bg-black text-white p-4 max-w-md mx-auto relative overflow-hidden overflow-x-hidden w-screen">
 
-      {/* BACKGROUND */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black via-zinc-950 to-black"></div>
+      {/* Background Glow */}
+      <div className="absolute top-0 left-0 w-72 h-72 bg-purple-600 blur-[120px] opacity-10 rounded-full"></div>
 
-      {/* GLOW */}
-      <div className="absolute top-0 left-0 w-[450px] h-[450px] bg-purple-600 blur-[150px] opacity-20 rounded-full"></div>
+      {/* Premium Header */}
+      <div className="relative flex items-center gap-4 mb-8 sticky top-0 bg-black/90 backdrop-blur-md py-3 z-50">
 
-      <div className="absolute bottom-0 right-0 w-[450px] h-[450px] bg-blue-600 blur-[150px] opacity-20 rounded-full"></div>
+        {/* Back Button */}
+        <button
+          onClick={() => router.back()}
+          className="w-14 h-14 flex items-center justify-center bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700 rounded-2xl text-2xl shadow-lg hover:border-purple-500 transition-all"
+        >
+          ←
+        </button>
 
-      <div className="relative z-10 px-4 pb-20">
+        <div>
 
-        {/* HEADER */}
-        <div className="sticky top-0 z-50 bg-black/70 backdrop-blur-xl border-b border-purple-500/20">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+            Lecture Player
+          </h1>
 
-          <div className="max-w-7xl mx-auto py-4 flex items-center gap-4">
-
-            {/* BACK */}
-            <button
-              onClick={() => router.back()}
-              className="w-14 h-14 rounded-2xl bg-zinc-900 border border-zinc-700 hover:border-purple-500 transition-all text-2xl"
-            >
-              ←
-            </button>
-
-            {/* TITLE */}
-            <div className="flex-1">
-
-              <h1 className="text-3xl md:text-5xl font-black bg-gradient-to-r from-purple-400 via-pink-500 to-blue-500 bg-clip-text text-transparent">
-                PLAYER
-              </h1>
-
-              <p className="text-zinc-400 text-xs md:text-sm tracking-[5px] uppercase mt-1">
-                Premium HD Streaming
-              </p>
-
-            </div>
-
-            {/* LOGO */}
-            <img
-              src="/images/logo.png"
-              alt="logo"
-              className="w-14 h-14 object-contain"
-            />
-
-          </div>
+          <p className="text-zinc-400 text-sm mt-1">
+            Premium HD Streaming
+          </p>
 
         </div>
 
-        {/* PLAYER */}
-        <div className="max-w-6xl mx-auto mt-8">
+      </div>
 
-          <div className="relative overflow-hidden rounded-[35px] border border-zinc-800 bg-gradient-to-br from-zinc-900 to-black shadow-[0_0_40px_rgba(168,85,247,0.15)]">
+      {/* Video Player */}
+      <div className="rounded-3xl overflow-hidden border border-zinc-800 shadow-lg">
 
-            {/* PLAYER BG */}
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-blue-500/10"></div>
+        {videoUrl ? (
 
-            {/* VIDEO */}
-            <div className="relative aspect-video">
+          <iframe
+            src={getEmbedUrl(decodeURIComponent(videoUrl))}
+            className="w-full h-[500px]"
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+          />
 
-              {videoUrl ? (
+        ) : (
 
-                <iframe
-                  src={getEmbedUrl(decodeURIComponent(videoUrl))}
-                  className="w-full h-full"
-                  allow="autoplay; encrypted-media"
-                  allowFullScreen
-                />
-
-              ) : (
-
-                <div className="w-full h-full flex items-center justify-center text-zinc-400 text-xl">
-
-                  No video found 😭
-
-                </div>
-
-              )}
-
-            </div>
-
+          <div className="p-10 text-center text-zinc-400">
+            No video found 😭
           </div>
 
-          {/* INFO CARD */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-5">
+        )}
 
-            {/* QUALITY */}
-            <div className="rounded-[28px] border border-zinc-800 bg-gradient-to-br from-zinc-900 to-black p-6">
+      </div>
 
-              <div className="text-4xl">
-                🎥
-              </div>
+      {/* Footer Info */}
+      <div className="mt-6 text-center">
 
-              <h2 className="text-2xl font-black mt-5">
-                HD Quality
-              </h2>
+        <h1 className="text-2xl font-bold">
+          Lecture Video
+        </h1>
 
-              <p className="text-zinc-400 mt-2 text-sm">
-                Premium smooth streaming experience.
-              </p>
-
-            </div>
-
-            {/* ACCESS */}
-            <div className="rounded-[28px] border border-zinc-800 bg-gradient-to-br from-zinc-900 to-black p-6">
-
-              <div className="text-4xl">
-                🔐
-              </div>
-
-              <h2 className="text-2xl font-black mt-5">
-                Secure Access
-              </h2>
-
-              <p className="text-zinc-400 mt-2 text-sm">
-                Defence Era protected content system.
-              </p>
-
-            </div>
-
-            {/* SUPPORT */}
-            <div className="rounded-[28px] border border-zinc-800 bg-gradient-to-br from-zinc-900 to-black p-6">
-
-              <div className="text-4xl">
-                ⚡
-              </div>
-
-              <h2 className="text-2xl font-black mt-5">
-                Fast Servers
-              </h2>
-
-              <p className="text-zinc-400 mt-2 text-sm">
-                Optimized for all devices & networks.
-              </p>
-
-            </div>
-
-          </div>
-
-          {/* FOOTER */}
-          <div className="text-center mt-16">
-
-            <p className="text-zinc-500 text-xs tracking-[8px] uppercase">
-
-              Defence Era Premium Platform
-
-            </p>
-
-          </div>
-
-        </div>
+        <p className="text-zinc-400 mt-2">
+          Defence Era • Premium Learning
+        </p>
 
       </div>
 
     </main>
 
   )
+
 }
 
 export default function PlayerPage() {
@@ -238,13 +149,9 @@ export default function PlayerPage() {
 
     <Suspense
       fallback={
-
-        <div className="min-h-screen bg-black flex items-center justify-center">
-
-          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-
+        <div className="text-white p-10">
+          Loading...
         </div>
-
       }
     >
 
@@ -253,4 +160,5 @@ export default function PlayerPage() {
     </Suspense>
 
   )
+
 }

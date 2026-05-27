@@ -3,142 +3,255 @@
 import { useRouter } from "next/navigation"
 
 export default function DeveloperPage() {
+
   const router = useRouter()
 
   return (
-    <main className="min-h-screen bg-black text-white p-4 max-w-md mx-auto relative overflow-hidden">
 
-      {/* Background Glow */}
-      <div className="absolute top-0 left-0 w-72 h-72 bg-purple-600 blur-[120px] opacity-20 rounded-full"></div>
-      <div className="absolute bottom-0 right-0 w-72 h-72 bg-blue-600 blur-[120px] opacity-20 rounded-full"></div>
+    <main className="min-h-screen bg-black text-white relative overflow-hidden">
 
-      {/* Header */}
-      <div className="relative flex items-center gap-4 mb-8 sticky top-0 bg-black/80 backdrop-blur-md py-3 z-50">
+      {/* PREMIUM BACKGROUND */}
+      <div className="absolute inset-0">
 
-        <button
-          onClick={() => router.back()}
-          className="w-12 h-12 flex items-center justify-center
-                     bg-zinc-900/90 backdrop-blur-md
-                     border border-zinc-700
-                     rounded-2xl
-                     shadow-lg shadow-purple-500/20
-                     hover:border-purple-500 hover:scale-105
-                     transition-all duration-300"
-          
-        >
-          ←
-        </button>
+        <img
+          src="/images/hero.jpg"
+          alt="bg"
+          className="w-full h-full object-cover opacity-[0.08]"
+        />
 
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-          Developer Profile
-        </h1>
+        <div className="absolute inset-0 bg-black/85"></div>
 
       </div>
 
-      {/* Main Card */}
-      <div className="relative bg-zinc-900/80 backdrop-blur-xl border border-purple-500 rounded-[32px] p-6 text-center shadow-[0_0_40px_#7c3aed]">
+      {/* PURPLE GLOW */}
+      <div className="absolute -top-20 -left-20 w-[400px] h-[400px] bg-purple-700 blur-[150px] opacity-20 rounded-full"></div>
 
-        {/* Premium Badge */}
-        <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs px-3 py-1 rounded-full font-bold shadow-lg">
-          PREMIUM
+      {/* BLUE GLOW */}
+      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-700 blur-[150px] opacity-20 rounded-full"></div>
+
+      {/* MAIN CONTAINER */}
+      <div className="relative z-10 w-full max-w-md mx-auto px-4 pt-24 pb-12">
+
+        {/* HEADER */}
+        <div className="sticky top-4 z-50 mb-10">
+
+          <div className="bg-black/70 backdrop-blur-2xl border border-zinc-800 rounded-[32px] px-4 py-4 flex items-center gap-4 shadow-[0_0_35px_rgba(168,85,247,0.12)]">
+
+            {/* BACK BUTTON */}
+            <button
+              onClick={() => router.back()}
+              className="w-14 h-14 rounded-2xl bg-zinc-900 border border-zinc-700 hover:border-purple-500 transition-all text-2xl shadow-lg flex items-center justify-center"
+            >
+              ←
+            </button>
+
+            {/* TITLE */}
+            <div className="flex-1">
+
+              <h1 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-purple-400 via-pink-500 to-blue-500 bg-clip-text text-transparent leading-tight">
+
+                Developer Profile
+
+              </h1>
+
+              <p className="text-zinc-500 text-xs tracking-[5px] uppercase mt-1">
+
+                Defence Era System
+
+              </p>
+
+            </div>
+
+          </div>
+
         </div>
 
-        {/* Avatar */}
-        <div className="relative w-32 h-32 mx-auto mt-4">
+        {/* MAIN PREMIUM CARD */}
+        <div className="relative overflow-hidden bg-black/40 backdrop-blur-2xl border border-purple-500/20 rounded-[42px] p-7 text-center shadow-[0_0_90px_rgba(168,85,247,0.18)]">
 
-          <div className="absolute inset-0 rounded-full bg-purple-600 blur-2xl opacity-40 animate-pulse"></div>
-
-          <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-zinc-900 shadow-[0_0_35px_#a855f7]">
-
+          {/* CARD BACKGROUND */}
           <img
-            src="/images/profile.jpg"
-            alt="Rajendra Profile"
-            className="w-full h-full object-cover"
-         />
+            src="/images/hero.jpg"
+            alt="bg"
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.06]"
+          />
+
+          <div className="absolute inset-0 bg-black/82"></div>
+
+          {/* CONTENT */}
+          <div className="relative z-10">
+
+            {/* SECRET BADGE */}
+            <div className="absolute top-0 right-0 bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-[11px] px-5 py-2 rounded-full font-black tracking-[3px] shadow-lg">
+
+              SECRET
+
+            </div>
+
+            {/* PROFILE IMAGE */}
+            <div className="relative w-36 h-36 mx-auto mt-5">
+
+              {/* OUTER GLOW */}
+              <div className="absolute inset-0 rounded-full bg-purple-600 blur-3xl opacity-60 animate-pulse"></div>
+
+              {/* IMAGE */}
+              <div className="relative w-36 h-36 rounded-full overflow-hidden border-[4px] border-zinc-900 shadow-[0_0_70px_rgba(168,85,247,0.7)]">
+
+                <img
+                  src="/images/profile.jpg"
+                  alt="profile"
+                  className="w-full h-full object-cover"
+                />
+
+              </div>
+
+            </div>
+
+            {/* NAME */}
+            <h1 className="text-[52px] leading-[58px] font-black mt-10 bg-gradient-to-r from-white via-purple-300 to-blue-400 bg-clip-text text-transparent tracking-wide">
+
+              PAGAL
+              <br />
+              IITIAN ⚡
+
+            </h1>
+
+            {/* SUBTITLE */}
+            <p className="text-purple-400 mt-6 font-semibold text-sm leading-8 tracking-wide">
+
+              Anonymous Developer • Defence Era
+              <br />
+
+              Building Digital Empires Silently 💀
+
+            </p>
+
+            {/* STATUS */}
+            <div className="mt-6 text-green-400 text-xs tracking-[7px] uppercase font-black animate-pulse">
+
+              ● SYSTEM ACTIVE
+
+            </div>
+
+            {/* ROLE BADGE */}
+            <div className="mt-7 inline-block bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 px-7 py-4 rounded-full text-sm font-black shadow-[0_0_40px_rgba(168,85,247,0.45)] tracking-[1px]">
+
+              AI Architect • Cyber Systems
+
+            </div>
+
+            {/* DESCRIPTION */}
+            <div className="mt-10 bg-zinc-900/50 border border-zinc-800 rounded-[30px] p-6">
+
+              <p className="text-zinc-300 leading-8 text-sm">
+
+                Building premium AI systems,
+                futuristic learning platforms,
+                private digital ecosystems and
+                powerful cyber experiences.
+
+                <br />
+                <br />
+
+                Silent moves.
+                Massive impact. ⚡
+
+              </p>
+
+            </div>
+
+            {/* STATS */}
+            <div className="grid grid-cols-2 gap-4 mt-8">
+
+              {/* CARD */}
+              <div className="bg-zinc-900/60 border border-zinc-800 rounded-[28px] p-5 shadow-xl">
+
+                <p className="text-zinc-500 text-[10px] tracking-[4px] uppercase">
+                  Experience
+                </p>
+
+                <p className="text-xl font-black text-purple-400 mt-3">
+                  AI Systems
+                </p>
+
+              </div>
+
+              {/* CARD */}
+              <div className="bg-zinc-900/60 border border-zinc-800 rounded-[28px] p-5 shadow-xl">
+
+                <p className="text-zinc-500 text-[10px] tracking-[4px] uppercase">
+                  Specialty
+                </p>
+
+                <p className="text-xl font-black text-blue-400 mt-3">
+                  Cyber Tech
+                </p>
+
+              </div>
+
+              {/* CARD */}
+              <div className="bg-zinc-900/60 border border-zinc-800 rounded-[28px] p-5 shadow-xl">
+
+                <p className="text-zinc-500 text-[10px] tracking-[4px] uppercase">
+                  Projects
+                </p>
+
+                <p className="text-lg font-black text-green-400 mt-3">
+                  Private Apps
+                </p>
+
+              </div>
+
+              {/* CARD */}
+              <div className="bg-zinc-900/60 border border-zinc-800 rounded-[28px] p-5 shadow-xl">
+
+                <p className="text-zinc-500 text-[10px] tracking-[4px] uppercase">
+                  Mission
+                </p>
+
+                <p className="text-lg font-black text-yellow-400 mt-3">
+                  Build Empire ⚡
+                </p>
+
+              </div>
+
+            </div>
+
+            {/* SECURE CONTACT */}
+            <div className="mt-8 bg-gradient-to-r from-zinc-900 to-black border border-purple-500/20 rounded-[32px] p-6 shadow-[0_0_40px_rgba(168,85,247,0.12)]">
+
+              <p className="text-zinc-500 text-[10px] tracking-[6px] uppercase">
+
+                Secure Channel
+
+              </p>
+
+              <p className="text-lg font-black bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mt-4 break-all">
+
+                shadowcore@protonx.dev
+
+              </p>
+
+            </div>
 
           </div>
 
         </div>
-       
 
-        {/* Name */}
-        <h1 className="text-4xl font-extrabold mt-6 text-white tracking-wide">
-          Rajendra Jakhar
-        </h1>
+        {/* FOOTER */}
+        <div className="text-center mt-10">
 
-        {/* Role */}
-        <p className="text-purple-400 mt-3 font-semibold text-sm leading-6">
-          Founder • RJ Academy <br />
-          Managed by Rajendra Jakhar & Piyush Chouhan
-        </p>
+          <p className="text-zinc-600 text-[10px] tracking-[8px] uppercase">
 
-        {/* Role Badge */}
-        <div className="mt-5 inline-block bg-gradient-to-r from-purple-600 to-blue-500 px-6 py-2 rounded-full text-sm font-bold shadow-lg">
-          Full Stack Developer • AI Builder
-        </div>
+            Defence Era • Anonymous Developer System
 
-        {/* Description */}
-        <p className="text-zinc-300 mt-6 leading-7 text-sm px-2">
-          Building premium learning systems for serious students with
-          automation, AI tools, modern education platforms and smart digital
-          experiences.
-        </p>
-
-        {/* Quote Card */}
-        <div className="mt-6 bg-black/40 border border-zinc-700 rounded-2xl p-4 shadow-inner">
-          <p className="text-red-400 font-bold italic text-sm">
-            “Code. Build. Dominate. 💀😈”
           </p>
-        </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 gap-4 mt-6">
-
-          <div className="bg-zinc-800/70 border border-zinc-700 p-4 rounded-2xl shadow-lg">
-            <p className="text-zinc-400 text-xs">Experience</p>
-            <p className="text-xl font-bold text-purple-400 mt-1">
-              Full Stack
-            </p>
-          </div>
-
-          <div className="bg-zinc-800/70 border border-zinc-700 p-4 rounded-2xl shadow-lg">
-            <p className="text-zinc-400 text-xs">Speciality</p>
-            <p className="text-xl font-bold text-blue-400 mt-1">
-              AI Systems
-            </p>
-          </div>
-
-          <div className="bg-zinc-800/70 border border-zinc-700 p-4 rounded-2xl shadow-lg">
-            <p className="text-zinc-400 text-xs">Projects</p>
-            <p className="text-xl font-bold text-green-400 mt-1">
-              Premium LMS
-            </p>
-          </div>
-
-          <div className="bg-zinc-800/70 border border-zinc-700 p-4 rounded-2xl shadow-lg">
-            <p className="text-zinc-400 text-xs">Mission</p>
-            <p className="text-xl font-bold text-yellow-400 mt-1">
-              Dominate 🚀
-            </p>
-          </div>
-
-        </div>
-
-        {/* Contact Card */}
-        <div className="mt-6 bg-gradient-to-r from-zinc-800 to-zinc-900 border border-zinc-700 rounded-2xl p-4 shadow-lg">
-          <p className="text-zinc-400 text-xs">Official Contact</p>
-          <p className="text-lg font-bold text-white mt-1 break-all">
-            rajendrajakharyt@gmail.com
-          </p>
         </div>
 
       </div>
-
-      {/* Footer */}
-      <p className="text-center text-zinc-500 text-xs mt-8">
-        RJ Academy • Premium Developer Profile
-      </p>
 
     </main>
+
   )
 }

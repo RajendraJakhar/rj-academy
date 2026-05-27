@@ -5,69 +5,127 @@ import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 
 export default function UsersPage() {
+
   const router = useRouter()
-  const [users, setUsers] = useState<any[]>([])
+
+  const [users, setUsers] = useState<any[]>(([]))
+  const [loading, setLoading] = useState(true)
+
+  const [totalUsers, setTotalUsers] = useState(0)
+  const [activeUsers, setActiveUsers] = useState(0)
+  const [blockedUsers, setBlockedUsers] = useState(0)
 
   useEffect(() => {
+    const isAdmin = localStorage.getItem("adminAccess")
+    if (isAdmin !== "true") {
+      router.push("/login")
+      return
+    }
+
     fetchUsers()
+
   }, [])
 
+  // FETCH USERS
   const fetchUsers = async () => {
+
+    setLoading(true)
+
     const { data, error } = await supabase
       .from("users")
       .select("*")
       .order("created_at", { ascending: false })
 
     if (error) {
+
       console.log(error)
+
     } else {
+
       setUsers(data || [])
+
+      setTotalUsers(data?.length || 0)
+
+      const active = data?.filter(
+        (u) => u.is_blocked === false
+      )
+
+      const blocked = data?.filter(
+        (u) => u.is_blocked === true
+      )
+
+      setActiveUsers(active?.length || 0)
+      setBlockedUsers(blocked?.length || 0)
+
     }
+
+    setLoading(false)
+
   }
 
+  // BLOCK USER
   const handleBlock = async (id: number) => {
+
     const confirmBlock = confirm(
-      "Are you sure you want to block this user? 🚫"
+      "Block this user? 🚫"
     )
 
     if (!confirmBlock) return
 
     const { error } = await supabase
       .from("users")
-      .update({ is_blocked: true })
+      .update({
+        is_blocked: true
+      })
       .eq("id", id)
 
     if (error) {
+
       alert("Failed 😭")
+
     } else {
+
       alert("User Blocked 🚫")
       fetchUsers()
+
     }
+
   }
 
+  // UNBLOCK USER
   const handleUnblock = async (id: number) => {
+
     const confirmUnblock = confirm(
-      "Are you sure you want to unblock this user? 😎🔥"
+      "Unblock this user? 😈"
     )
 
     if (!confirmUnblock) return
 
     const { error } = await supabase
       .from("users")
-      .update({ is_blocked: false })
+      .update({
+        is_blocked: false
+      })
       .eq("id", id)
 
     if (error) {
+
       alert("Failed 😭")
+
     } else {
-      alert("User Unblocked 😎🔥")
+
+      alert("User Active 😈🔥")
       fetchUsers()
+
     }
+
   }
 
+  // DELETE USER
   const handleDelete = async (id: number) => {
+
     const confirmDelete = confirm(
-      "Vastav mai aap is user ko delete karna chahte hain? 🗑"
+      "Delete this user permanently? 🗑"
     )
 
     if (!confirmDelete) return
@@ -78,135 +136,251 @@ export default function UsersPage() {
       .eq("id", id)
 
     if (error) {
-      alert("Delete failed 😭")
+
+      alert("Delete Failed 😭")
+
     } else {
+
       alert("User Deleted 😈")
       fetchUsers()
+
     }
+
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-4 max-w-md mx-auto relative overflow-hidden overflow-x-hidden w-screen">
 
-      {/* Background Glow */}
-      <div className="absolute top-0 right-0 w-72 h-72 bg-purple-600 blur-[120px] opacity-10 rounded-full"></div>
+    <main className="min-h-screen bg-black text-white relative overflow-hidden">
 
-      {/* Premium Header */}
-      <div className="relative flex items-center gap-4 mb-8 sticky top-0 bg-black/90 backdrop-blur-md py-3 z-50">
+      {/* BACKGROUND GLOW */}
+      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-purple-600/20 blur-[140px] rounded-full"></div>
 
-        {/* Back Button */}
-        <button
-          onClick={() => router.back()}
-          className="w-14 h-14 flex items-center justify-center bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700 rounded-2xl text-2xl shadow-lg hover:border-purple-500 transition-all"
-        >
-          ←
-        </button>
+      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-600/20 blur-[140px] rounded-full"></div>
 
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-            Manage Users
-          </h1>
+      {/* MAIN */}
+      <div className="relative z-10 p-4 lg:p-8 max-w-7xl mx-auto">
 
-          <p className="text-zinc-400 text-sm mt-1">
-            RJ Academy Premium User Control Panel
-          </p>
+        {/* HEADER */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8">
+
+          <div className="flex items-center gap-4">
+
+            <button
+              onClick={() => router.back()}
+              className="w-14 h-14 flex items-center justify-center bg-zinc-900 border border-zinc-700 rounded-2xl text-2xl hover:border-purple-500 transition-all"
+            >
+              ←
+            </button>
+
+            <div>
+
+              <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+                Defence Era Users
+              </h1>
+
+              <p className="text-zinc-400 mt-1">
+                Premium User Management System
+              </p>
+
+            </div>
+
+          </div>
+
+          <button
+            onClick={fetchUsers}
+            className="bg-gradient-to-r from-purple-600 to-blue-500 px-6 py-4 rounded-2xl font-bold"
+          >
+            🔄 Refresh
+          </button>
+
+        </div>
+
+        {/* ANALYTICS */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+
+          <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-6 rounded-[28px] shadow-2xl">
+
+            <p className="text-sm opacity-80">
+              Total Students
+            </p>
+
+            <h2 className="text-5xl font-black mt-3">
+              {totalUsers}
+            </h2>
+
+          </div>
+
+          <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-6 rounded-[28px] shadow-2xl">
+
+            <p className="text-sm opacity-80">
+              Active Students
+            </p>
+
+            <h2 className="text-5xl font-black mt-3">
+              {activeUsers}
+            </h2>
+
+          </div>
+
+          <div className="bg-gradient-to-r from-red-500 to-pink-500 p-6 rounded-[28px] shadow-2xl">
+
+            <p className="text-sm opacity-80">
+              Blocked Students
+            </p>
+
+            <h2 className="text-5xl font-black mt-3">
+              {blockedUsers}
+            </h2>
+
+          </div>
+
+        </div>
+
+        {/* USERS */}
+        {loading ? (
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-[32px] p-10 text-center text-zinc-400">
+
+            Loading Users...
+
+          </div>
+
+        ) : users.length === 0 ? (
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-[32px] p-10 text-center text-zinc-400">
+
+            No Users Found 😭
+
+          </div>
+
+        ) : (
+
+          <div className="grid lg:grid-cols-2 gap-5">
+
+            {users.map((user) => (
+
+              <div
+                key={user.id}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[32px] p-6 shadow-2xl hover:border-purple-500/40 transition-all"
+              >
+
+                {/* TOP */}
+                <div className="flex items-start justify-between gap-3">
+
+                  <div>
+
+                    <h2 className="text-2xl font-bold">
+                      {user.name}
+                    </h2>
+
+                    <p className="text-zinc-400 mt-1 break-all">
+                      {user.email}
+                    </p>
+
+                  </div>
+
+                  {user.is_blocked ? (
+
+                    <div className="bg-red-500/20 border border-red-500 text-red-400 px-4 py-2 rounded-2xl text-sm font-bold">
+                      🔴 Blocked
+                    </div>
+
+                  ) : (
+
+                    <div className="bg-green-500/20 border border-green-500 text-green-400 px-4 py-2 rounded-2xl text-sm font-bold">
+                      🟢 Active
+                    </div>
+
+                  )}
+
+                </div>
+
+                {/* INFO */}
+                <div className="mt-6 space-y-3">
+
+                  <div className="bg-zinc-900/70 border border-zinc-800 rounded-2xl p-4">
+
+                    <p className="text-zinc-400 text-sm">
+                      Mobile Number
+                    </p>
+
+                    <h3 className="font-bold mt-1">
+                      {user.mobile}
+                    </h3>
+
+                  </div>
+
+                  <div className="bg-zinc-900/70 border border-zinc-800 rounded-2xl p-4">
+
+                    <p className="text-zinc-400 text-sm">
+                      Batch
+                    </p>
+
+                    <h3 className="font-bold mt-1">
+                      {user.batch}
+                    </h3>
+
+                  </div>
+
+                </div>
+
+                {/* BUTTONS */}
+                <div className="grid grid-cols-2 gap-4 mt-6">
+
+                  {user.is_blocked ? (
+
+                    <button
+                      onClick={() =>
+                        handleUnblock(user.id)
+                      }
+                      className="bg-green-600 hover:bg-green-700 transition-all p-4 rounded-2xl font-bold"
+                    >
+                      ✅ Unblock
+                    </button>
+
+                  ) : (
+
+                    <button
+                      onClick={() =>
+                        handleBlock(user.id)
+                      }
+                      className="bg-yellow-500 hover:bg-yellow-600 transition-all p-4 rounded-2xl font-bold text-black"
+                    >
+                      🚫 Block
+                    </button>
+
+                  )}
+
+                  <button
+                    onClick={() =>
+                      handleDelete(user.id)
+                    }
+                    className="bg-red-600 hover:bg-red-700 transition-all p-4 rounded-2xl font-bold"
+                  >
+                    🗑 Delete
+                  </button>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        )}
+
+        {/* FOOTER */}
+        <div className="text-center text-zinc-500 text-sm mt-10">
+
+          Defence Era • Premium User Management
+
         </div>
 
       </div>
 
-      {/* Users */}
-      <div className="space-y-5">
-
-        {users.length === 0 ? (
-          <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-3xl text-center text-zinc-400">
-            No users found 
-          </div>
-        ) : (
-          users.map((user) => (
-
-            <div
-              key={user.id}
-              className="bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700 rounded-3xl p-5 shadow-lg"
-            >
-
-              {/* User Info */}
-              <div className="space-y-2 text-sm">
-
-                <p>
-                  <span className="text-purple-400 font-medium">Name:</span>{" "}
-                  {user.name}
-                </p>
-
-                <p>
-                  <span className="text-purple-400 font-medium">Email:</span>{" "}
-                  {user.email}
-                </p>
-
-                <p>
-                  <span className="text-purple-400 font-medium">Mobile:</span>{" "}
-                  {user.mobile}
-                </p>
-
-                <p>
-                  <span className="text-purple-400 font-medium">Batch:</span>{" "}
-                  {user.batch}
-                </p>
-
-                <p>
-                  <span className="text-purple-400 font-medium">Status:</span>{" "}
-                  {user.is_blocked ? (
-                    <span className="text-red-400 font-bold">
-                      🔴 Blocked
-                    </span>
-                  ) : (
-                    <span className="text-green-400 font-bold">
-                      🟢 Active
-                    </span>
-                  )}
-                </p>
-
-              </div>
-
-              {/* Buttons */}
-              <div className="mt-5 grid grid-cols-2 gap-3">
-
-                {user.is_blocked ? (
-                  <button
-                    onClick={() => handleUnblock(user.id)}
-                    className="bg-green-600 hover:bg-green-700 p-3 rounded-2xl font-bold text-sm"
-                  >
-                    ✅ Unblock
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleBlock(user.id)}
-                    className="bg-yellow-500 hover:bg-yellow-600 p-3 rounded-2xl font-bold text-sm text-black"
-                  >
-                    🚫 Block
-                  </button>
-                )}
-
-                <button
-                  onClick={() => handleDelete(user.id)}
-                  className="bg-red-600 hover:bg-red-700 p-3 rounded-2xl font-bold text-sm"
-                >
-                  🗑 Delete
-                </button>
-
-              </div>
-
-            </div>
-
-          ))
-        )}
-
-      </div>
-
-      {/* Footer */}
-      <p className="text-center text-zinc-500 text-xs mt-8">
-        RJ Academy • Premium User Manager
-      </p>
-
     </main>
+
   )
+
 }

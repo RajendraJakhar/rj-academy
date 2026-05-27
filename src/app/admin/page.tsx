@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 
 export default function AdminPage() {
+
   const router = useRouter()
+
   const [isUnlocked, setIsUnlocked] = useState(false)
   const [adminPassword, setAdminPassword] = useState("")
 
@@ -15,32 +17,32 @@ export default function AdminPage() {
   const [chapters, setChapters] = useState(0)
   const [lectures, setLectures] = useState(0)
 
+  const [totalUsers, setTotalUsers] = useState(0)
+  const [activeUsers, setActiveUsers] = useState(0)
+  const [blockedUsers, setBlockedUsers] = useState(0)
+
   const [requests, setRequests] = useState<any[]>([])
 
   const SECRET_PASSWORD = "RJ@Admin2026"
 
   useEffect(() => {
+
     const unlocked = localStorage.getItem("adminAccess")
 
     if (unlocked === "true") {
       setIsUnlocked(true)
     }
+
     if (isUnlocked) {
       fetchStats()
       fetchRequests()
     }
+
   }, [isUnlocked])
 
-  const handleUnlock = () => {
-    if (adminPassword === SECRET_PASSWORD) {
-      localStorage.setItem("adminAccess", "true")
-      setIsUnlocked(true)
-    } else {
-      alert("Wrong Admin Password 😭")
-    }
-  }
-
+  // FETCH STATS
   const fetchStats = async () => {
+
     const { data: courseData } = await supabase
       .from("courses")
       .select("*")
@@ -57,53 +59,135 @@ export default function AdminPage() {
       .from("lectures")
       .select("*")
 
+    const { data: usersData } = await supabase
+      .from("users")
+      .select("*")
+
     setCourses(courseData?.length || 0)
     setSubjects(subjectData?.length || 0)
     setChapters(chapterData?.length || 0)
     setLectures(lectureData?.length || 0)
+
+    setTotalUsers(usersData?.length || 0)
+
+    const active = usersData?.filter(
+      (u) => u.is_blocked === false
+    )
+
+    const blocked = usersData?.filter(
+      (u) => u.is_blocked === true
+    )
+
+    setActiveUsers(active?.length || 0)
+    setBlockedUsers(blocked?.length || 0)
+
   }
 
+  // FETCH REQUESTS
   const fetchRequests = async () => {
+
     const { data, error } = await supabase
       .from("access_requests")
       .select("*")
       .order("created_at", { ascending: false })
 
     if (error) {
+
       console.log(error)
+
     } else {
+
       setRequests(data || [])
+
     }
+
   }
+
+  // ADMIN LOCK
+  const handleUnlock = () => {
+
+    if (adminPassword === SECRET_PASSWORD) {
+
+      localStorage.setItem("adminAccess", "true")
+      setIsUnlocked(true)
+
+    } else {
+
+      alert("Wrong Password 😭")
+
+    }
+
+  }
+
+  // APPROVE USER
   const handleApprove = async (item: any) => {
-  const { error } = await supabase
-    .from("users")
-    .insert([
-      {
-        name: item.name,
-        email: item.email,
-        mobile: item.mobile,
-        batch: item.batch,
-        is_blocked: false,
-      },
-    ])
 
-  if (error) {
-    alert("Approve failed 😭")
-    console.log(error)
-    return
+    if (item.status === "approved") {
+
+      alert("Already Approved 😈")
+      return
+
+    }
+
+    // CREATE AUTH ACCOUNT
+    const { error: authError } =
+      await supabase.auth.signUp({
+
+        email: item.email,
+        password: item.password,
+
+      })
+
+    if (authError) {
+
+      console.log(authError)
+      alert("Auth Error 😭")
+      return
+
+    }
+
+    // INSERT USER
+    const { error: userError } =
+      await supabase
+        .from("users")
+        .insert([
+          {
+            name: item.name,
+            email: item.email,
+            mobile: item.mobile,
+            batch: item.batch,
+            is_blocked: false,
+          },
+        ])
+
+    if (userError) {
+
+      console.log(userError)
+      alert("Insert Failed 😭")
+      return
+
+    }
+
+    // UPDATE STATUS
+    await supabase
+      .from("access_requests")
+      .update({
+        status: "approved",
+      })
+      .eq("id", item.id)
+
+    alert("User Approved 😈🔥")
+
+    fetchRequests()
+    fetchStats()
+
   }
 
-  await supabase
-    .from("access_requests")
-    .delete()
-    .eq("id", item.id)
-
-  alert("User Approved 😎🔥")
-  fetchRequests()
-}
+  // DELETE REQUEST
   const handleDeleteRequest = async (id: number) => {
-    const confirmDelete = confirm("Delete this request?")
+
+    const confirmDelete =
+      confirm("Delete Request?")
 
     if (!confirmDelete) return
 
@@ -113,203 +197,300 @@ export default function AdminPage() {
       .eq("id", id)
 
     if (error) {
-      alert("Delete failed 😭")
+
+      alert("Delete Failed 😭")
+
     } else {
-      alert("Deleted 😎🔥")
+
+      alert("Deleted 😈")
       fetchRequests()
+
     }
+
   }
 
+  // LOGOUT
   const handleLogout = async () => {
+
     localStorage.removeItem("adminAccess")
+
     await supabase.auth.signOut()
+
     window.location.href = "/login"
+
   }
 
-  /* PASSWORD LOCK SCREEN */
+  // LOCK SCREEN
   if (!isUnlocked) {
+
     return (
+
       <main className="min-h-screen bg-black text-white flex items-center justify-center p-4">
 
-        <div className="w-full max-w-md bg-zinc-900 border border-purple-500 rounded-3xl p-15 text-center shadow-[0_0_10px_#a855f7]">
+        <div className="w-full max-w-md bg-zinc-900 border border-purple-500/30 rounded-[32px] p-8 shadow-2xl">
 
-          <h1 className="text-4xl font-bold text-purple-400">
-            🔐 Admin Lock
+          <h1 className="text-4xl font-black text-center bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+            Defence Era
           </h1>
 
-          <p className="text-zinc-400 mt-3">
-            Enter Admin Secret Password
+          <p className="text-center text-zinc-400 mt-3">
+            Premium Admin Access
           </p>
 
           <input
             type="password"
-            placeholder="Admin Password"
+            placeholder="Enter Admin Password"
             value={adminPassword}
-            onChange={(e) => setAdminPassword(e.target.value)}
-            className="w-full bg-black border border-zinc-700 rounded-2xl p-4 mt-6 outline-none"
+            onChange={(e) =>
+              setAdminPassword(e.target.value)
+            }
+            className="w-full mt-6 bg-black border border-zinc-700 rounded-2xl p-4 outline-none"
           />
 
           <button
             onClick={handleUnlock}
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-500 p-4 rounded-2xl font-bold mt-5"
+            className="w-full mt-5 bg-gradient-to-r from-purple-600 to-pink-500 p-4 rounded-2xl font-bold"
           >
-            Unlock Admin Panel
+            Unlock Dashboard
           </button>
 
         </div>
 
       </main>
+
     )
+
   }
 
-  /* REAL DASHBOARD */
+  // REAL DASHBOARD
   return (
-    <main className="min-h-screen w-full bg-black text-white p-4 max-w-md mx-auto relative overflow-hidden overflow-x-hidden w-screen">
-    
-    {/* Premium Header */}
-    <div className="relative flex items-center gap-4 mb-8 sticky top-0 bg-black/90 backdrop-blur-md py-3 z-50">
 
-      {/* Back Button */}
-      <button
-        onClick={() => router.back()}
-        className="w-14 h-14 flex items-center justify-center bg-zinc-900 border border-zinc-700 rounded-2xl text-3xl font-extrabold shadow-lg hover:border-purple-500 transition-all"
-      >
-        ⟵
-      </button>
+    <main className="min-h-screen bg-black text-white p-4 lg:p-8">
 
-      <div className="flex-1">
-       <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-         Admin Dashboard
-       </h1>
+      {/* HEADER */}
+      <div className="flex flex-col lg:flex-row gap-4 lg:items-center justify-between mb-8">
 
-      
+        <div>
+
+          <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+            Defence Era Admin
+          </h1>
+
+          <p className="text-zinc-400 mt-2">
+            Premium Control Dashboard
+          </p>
+
+        </div>
+
+        <div className="flex gap-3">
+
+          <button
+            onClick={() => router.back()}
+            className="bg-zinc-900 border border-zinc-700 px-5 py-3 rounded-2xl"
+          >
+            ← Back
+          </button>
+
+          <button
+            onClick={handleLogout}
+            className="bg-gradient-to-r from-red-500 to-pink-500 px-5 py-3 rounded-2xl font-bold"
+          >
+            Logout
+          </button>
+
+        </div>
+
       </div>
 
-      <button
-        onClick={handleLogout}
-        className="bg-gradient-to-r from-red-500 to-pink-500 px-4 py-3 rounded-2xl font-bold text-sm"
-      >
-       Logout
-      </button>
-
-    </div>
-
-      {/* Analytics */}
-      <div className="grid grid-cols-2 gap-4">
+      {/* ANALYTICS */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
 
         <div className="bg-gradient-to-r from-purple-600 to-blue-500 p-5 rounded-3xl">
-          <h2 className="text-sm">Courses</h2>
-          <p className="text-3xl font-bold mt-2">{courses}</p>
+          <p className="text-sm">Courses</p>
+          <h2 className="text-4xl font-black mt-2">
+            {courses}
+          </h2>
         </div>
 
         <div className="bg-gradient-to-r from-pink-500 to-red-500 p-5 rounded-3xl">
-          <h2 className="text-sm">Subjects</h2>
-          <p className="text-3xl font-bold mt-2">{subjects}</p>
+          <p className="text-sm">Subjects</p>
+          <h2 className="text-4xl font-black mt-2">
+            {subjects}
+          </h2>
         </div>
 
         <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-5 rounded-3xl">
-          <h2 className="text-sm">Chapters</h2>
-          <p className="text-3xl font-bold mt-2">{chapters}</p>
+          <p className="text-sm">Chapters</p>
+          <h2 className="text-4xl font-black mt-2">
+            {chapters}
+          </h2>
         </div>
 
         <div className="bg-gradient-to-r from-orange-500 to-yellow-500 p-5 rounded-3xl">
-          <h2 className="text-sm">Lectures</h2>
-          <p className="text-3xl font-bold mt-2">{lectures}</p>
+          <p className="text-sm">Lectures</p>
+          <h2 className="text-4xl font-black mt-2">
+            {lectures}
+          </h2>
         </div>
 
       </div>
 
-      {/* Quick Actions */}
-      <div className="mt-10">
+      {/* USER ANALYTICS */}
+      <div className="grid grid-cols-3 gap-4 mt-4">
 
-        <h2 className="text-2xl font-bold text-purple-400 mb-6">
-          ⚡ Quick Actions
-        </h2>
+        <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-5 rounded-3xl">
+          <p className="text-sm">Students</p>
+          <h2 className="text-3xl font-black mt-2">
+            {totalUsers}
+          </h2>
+        </div>
 
-          <Link href="/admin/courses" className="block mb-4">
-            <button className="w-full bg-zinc-900 hover:border-purple-500 border border-zinc-800 transition-all p-4 rounded-3xl text-left font-bold shadow-lg">
-              📚 Add / Manage Courses
-            </button>
-          </Link>
+        <div className="bg-gradient-to-r from-green-500 to-emerald-500 p-5 rounded-3xl">
+          <p className="text-sm">Active</p>
+          <h2 className="text-3xl font-black mt-2">
+            {activeUsers}
+          </h2>
+        </div>
 
-          <Link href="/admin/subjects" className="block mb-4">
-            <button className="w-full bg-zinc-900 hover:border-blue-500 border border-zinc-800 transition-all p-4 rounded-3xl text-left font-bold shadow-lg">
-              📘 Add / Manage Subjects
-            </button>
-          </Link>
-
-          <Link href="/admin/chapters" className="block mb-4">
-            <button className="w-full bg-zinc-900 hover:border-green-500 border border-zinc-800 transition-all p-4 rounded-3xl text-left font-bold shadow-lg">
-              📖 Add / Manage Chapters
-            </button>
-          </Link>
-
-          <Link href="/admin/lectures" className="block mb-4">
-            <button className="w-full bg-zinc-900 hover:border-yellow-500 border border-zinc-800 transition-all p-4 rounded-3xl text-left font-bold shadow-lg">
-              🎥 Add / Manage Lectures
-            </button>
-          </Link>
-
-          <Link href="/admin/users" className="block mb-6">
-            <button className="w-full bg-gradient-to-r from-purple-600 to-pink-500 p-5 rounded-2xl font-bold text-xl mt-5">
-              Manage Users
-            </button>
-          </Link>
-
+        <div className="bg-gradient-to-r from-red-500 to-pink-500 p-5 rounded-3xl">
+          <p className="text-sm">Blocked</p>
+          <h2 className="text-3xl font-black mt-2">
+            {blockedUsers}
+          </h2>
+        </div>
 
       </div>
 
-      {/* Premium Access Requests */}
+      {/* QUICK ACTIONS */}
       <div className="mt-10">
 
         <h2 className="text-2xl font-bold text-purple-400 mb-5">
+          ⚡ Quick Actions
+        </h2>
+
+        <div className="grid lg:grid-cols-2 gap-4">
+
+          <Link href="/admin/courses">
+            <button className="w-full bg-zinc-900 border border-zinc-800 hover:border-purple-500 p-5 rounded-3xl text-left font-bold">
+              📚 Manage Courses
+            </button>
+          </Link>
+
+          <Link href="/admin/subjects">
+            <button className="w-full bg-zinc-900 border border-zinc-800 hover:border-blue-500 p-5 rounded-3xl text-left font-bold">
+              📘 Manage Subjects
+            </button>
+          </Link>
+
+          <Link href="/admin/chapters">
+            <button className="w-full bg-zinc-900 border border-zinc-800 hover:border-green-500 p-5 rounded-3xl text-left font-bold">
+              📖 Manage Chapters
+            </button>
+          </Link>
+
+          <Link href="/admin/lectures">
+            <button className="w-full bg-zinc-900 border border-zinc-800 hover:border-yellow-500 p-5 rounded-3xl text-left font-bold">
+              🎥 Manage Lectures
+            </button>
+          </Link>
+
+          <Link href="/admin/users">
+            <button className="w-full bg-gradient-to-r from-purple-600 to-pink-500 p-5 rounded-3xl font-bold text-lg">
+              👥 Manage Users
+            </button>
+          </Link>
+
+        </div>
+
+      </div>
+
+      {/* REQUESTS */}
+      <div className="mt-12">
+
+        <h2 className="text-2xl font-bold text-purple-400 mb-6">
           🔥 Premium Access Requests
         </h2>
 
-        <div className="space-y-4">
+        <div className="grid lg:grid-cols-2 gap-5">
 
-          {requests.length === 0 ? (
-            <div className="bg-zinc-900 p-5 rounded-3xl text-zinc-400 text-center">
-              No requests yet 😭
-            </div>
-          ) : (
-            requests.map((item) => (
+          {requests.map((item) => (
 
-              <div
-                key={item.id}
-                className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5"
+            <div
+              key={item.id}
+              className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5"
+            >
+
+              <p>
+                <span className="text-purple-400">
+                  👤 Name:
+                </span>{" "}
+                {item.name}
+              </p>
+
+              <p className="mt-2">
+                <span className="text-purple-400">
+                  📧 Email:
+                </span>{" "}
+                {item.email}
+              </p>
+
+              <p className="mt-2">
+                <span className="text-purple-400">
+                  📱 Mobile:
+                </span>{" "}
+                {item.mobile}
+              </p>
+
+              <p className="mt-2">
+                <span className="text-purple-400">
+                  🎓 Batch:
+                </span>{" "}
+                {item.batch}
+              </p>
+
+              <p className="mt-2">
+                <span className="text-purple-400">
+                  📌 Status:
+                </span>
+
+                {item.status === "approved" ? (
+                  <span className="text-green-400 font-bold">
+                    {" "}🟢 Approved
+                  </span>
+                ) : (
+                  <span className="text-yellow-400 font-bold">
+                    {" "}🟡 Pending
+                  </span>
+                )}
+
+              </p>
+
+              <button
+                onClick={() => handleApprove(item)}
+                className="w-full mt-5 bg-green-600 hover:bg-green-700 p-4 rounded-2xl font-bold"
               >
+                ✅ Approve User
+              </button>
 
-                <p className="text-sm"><span className="text-purple-400">👤 Name:</span> {item.name}</p>
-                <p className="text-sm mt-1"><span className="text-purple-400">📧 Email:</span> {item.email}</p>
-                <p className="text-sm mt-1"><span className="text-purple-400">📱 Mobile:</span> {item.mobile}</p>
-                <p className="text-sm mt-1"><span className="text-purple-400">🎓 Batch:</span> {item.batch}</p>
-                <p className="text-sm mt-1"><span className="text-purple-400">🔑 Password:</span> {item.password}</p>
-                <p className="text-sm mt-1"><span className="text-purple-400">💬 Message:</span> {item.message}</p>
-                <p className="text-sm mt-1"><span className="text-purple-400">🕒 Time:</span> {item.created_at}</p>
-                
-                <button
-                  onClick={() => handleApprove(item)}
-                  className="w-full mt-4 bg-green-600 hover:bg-green-700 p-3 rounded-2xl font-bold"
->
-                  ✅ Approve User
-                </button>
-                <button
-                  onClick={() => handleDeleteRequest(item.id)}
-                  className="w-full mt-4 bg-red-600 hover:bg-red-700 p-3 rounded-2xl font-bold"
-                >
-                  🗑 Delete Request
-                </button>
+              <button
+                onClick={() =>
+                  handleDeleteRequest(item.id)
+                }
+                className="w-full mt-3 bg-red-600 hover:bg-red-700 p-4 rounded-2xl font-bold"
+              >
+                🗑 Delete Request
+              </button>
 
-              </div>
+            </div>
 
-            ))
-          )}
+          ))}
 
         </div>
 
       </div>
 
     </main>
+
   )
+
 }

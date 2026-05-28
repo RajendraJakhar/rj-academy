@@ -11,6 +11,7 @@ export default function AdminPage() {
 
   const [isUnlocked, setIsUnlocked] = useState(false)
   const [adminPassword, setAdminPassword] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const [courses, setCourses] = useState(0)
   const [subjects, setSubjects] = useState(0)
@@ -21,26 +22,32 @@ export default function AdminPage() {
   const [activeUsers, setActiveUsers] = useState(0)
   const [blockedUsers, setBlockedUsers] = useState(0)
 
-  const [requests, setRequests] = useState<any[]>([])
-
+  // ✅ ADMIN PASSWORD
   const SECRET_PASSWORD = "RJ@Admin2026"
+
+  // ✅ ADMIN EMAILS
+  const ADMIN_EMAILS = [
+    "rajendrajakhar1322@gmail.com",
+    "rajendrajakharyt@gmail.com",
+    "cricketnews1322@gmail.com",
+  ]
 
   useEffect(() => {
 
-    const unlocked = localStorage.getItem("adminAccess")
+    const unlocked =
+      localStorage.getItem("adminAccess")
 
     if (unlocked === "true") {
+
       setIsUnlocked(true)
-    }
 
-    if (isUnlocked) {
       fetchStats()
-      fetchRequests()
+
     }
 
-  }, [isUnlocked])
+  }, [])
 
-  // FETCH STATS
+  // ✅ FETCH STATS
   const fetchStats = async () => {
 
     const { data: courseData } = await supabase
@@ -83,133 +90,58 @@ export default function AdminPage() {
 
   }
 
-  // FETCH REQUESTS
-  const fetchRequests = async () => {
+  // ✅ SECURE ADMIN UNLOCK
+  const handleUnlock = async () => {
 
-    const { data, error } = await supabase
-      .from("access_requests")
-      .select("*")
-      .order("created_at", { ascending: false })
+    setLoading(true)
 
-    if (error) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
 
-      console.log(error)
+    // ❌ NOT LOGGED IN
+    if (!user) {
 
-    } else {
+      alert("Login Required 😭")
+      router.push("/login")
 
-      setRequests(data || [])
+      setLoading(false)
+      return
 
     }
 
-  }
-
-  // ADMIN LOCK
-  const handleUnlock = () => {
-
-    if (adminPassword === SECRET_PASSWORD) {
-
-      localStorage.setItem("adminAccess", "true")
-      setIsUnlocked(true)
-
-    } else {
+    // ❌ WRONG PASSWORD
+    if (adminPassword !== SECRET_PASSWORD) {
 
       alert("Wrong Password 😭")
 
-    }
-
-  }
-
-  // APPROVE USER
-  const handleApprove = async (item: any) => {
-
-    if (item.status === "approved") {
-
-      alert("Already Approved 😈")
+      setLoading(false)
       return
 
     }
 
-    // CREATE AUTH ACCOUNT
-    const { error: authError } =
-      await supabase.auth.signUp({
+    // ❌ NOT ADMIN EMAIL
+    if (!ADMIN_EMAILS.includes(user.email || "")) {
 
-        email: item.email,
-        password: item.password,
+      alert("Access Denied 🤡")
 
-      })
-
-    if (authError) {
-
-      console.log(authError)
-      alert("Auth Error 😭")
+      setLoading(false)
       return
 
     }
 
-    // INSERT USER
-    const { error: userError } =
-      await supabase
-        .from("users")
-        .insert([
-          {
-            name: item.name,
-            email: item.email,
-            mobile: item.mobile,
-            batch: item.batch,
-            is_blocked: false,
-          },
-        ])
+    // ✅ ACCESS GRANTED
+    localStorage.setItem("adminAccess", "true")
 
-    if (userError) {
+    setIsUnlocked(true)
 
-      console.log(userError)
-      alert("Insert Failed 😭")
-      return
-
-    }
-
-    // UPDATE STATUS
-    await supabase
-      .from("access_requests")
-      .update({
-        status: "approved",
-      })
-      .eq("id", item.id)
-
-    alert("User Approved 😈🔥")
-
-    fetchRequests()
     fetchStats()
 
-  }
-
-  // DELETE REQUEST
-  const handleDeleteRequest = async (id: number) => {
-
-    const confirmDelete =
-      confirm("Delete Request?")
-
-    if (!confirmDelete) return
-
-    const { error } = await supabase
-      .from("access_requests")
-      .delete()
-      .eq("id", id)
-
-    if (error) {
-
-      alert("Delete Failed 😭")
-
-    } else {
-
-      alert("Deleted 😈")
-      fetchRequests()
-
-    }
+    setLoading(false)
 
   }
 
-  // LOGOUT
+  // ✅ LOGOUT
   const handleLogout = async () => {
 
     localStorage.removeItem("adminAccess")
@@ -220,7 +152,7 @@ export default function AdminPage() {
 
   }
 
-  // LOCK SCREEN
+  // ✅ LOCK SCREEN
   if (!isUnlocked) {
 
     return (
@@ -249,9 +181,10 @@ export default function AdminPage() {
 
           <button
             onClick={handleUnlock}
+            disabled={loading}
             className="w-full mt-5 bg-gradient-to-r from-purple-600 to-pink-500 p-4 rounded-2xl font-bold"
           >
-            Unlock Dashboard
+            {loading ? "Checking..." : "Unlock Dashboard"}
           </button>
 
         </div>
@@ -262,7 +195,7 @@ export default function AdminPage() {
 
   }
 
-  // REAL DASHBOARD
+  // ✅ REAL DASHBOARD
   return (
 
     <main className="min-h-screen bg-black text-white p-4 lg:p-8">
@@ -399,91 +332,6 @@ export default function AdminPage() {
               👥 Manage Users
             </button>
           </Link>
-
-        </div>
-
-      </div>
-
-      {/* REQUESTS */}
-      <div className="mt-12">
-
-        <h2 className="text-2xl font-bold text-purple-400 mb-6">
-          🔥 Premium Access Requests
-        </h2>
-
-        <div className="grid lg:grid-cols-2 gap-5">
-
-          {requests.map((item) => (
-
-            <div
-              key={item.id}
-              className="bg-zinc-900 border border-zinc-800 rounded-3xl p-5"
-            >
-
-              <p>
-                <span className="text-purple-400">
-                  👤 Name:
-                </span>{" "}
-                {item.name}
-              </p>
-
-              <p className="mt-2">
-                <span className="text-purple-400">
-                  📧 Email:
-                </span>{" "}
-                {item.email}
-              </p>
-
-              <p className="mt-2">
-                <span className="text-purple-400">
-                  📱 Mobile:
-                </span>{" "}
-                {item.mobile}
-              </p>
-
-              <p className="mt-2">
-                <span className="text-purple-400">
-                  🎓 Batch:
-                </span>{" "}
-                {item.batch}
-              </p>
-
-              <p className="mt-2">
-                <span className="text-purple-400">
-                  📌 Status:
-                </span>
-
-                {item.status === "approved" ? (
-                  <span className="text-green-400 font-bold">
-                    {" "}🟢 Approved
-                  </span>
-                ) : (
-                  <span className="text-yellow-400 font-bold">
-                    {" "}🟡 Pending
-                  </span>
-                )}
-
-              </p>
-
-              <button
-                onClick={() => handleApprove(item)}
-                className="w-full mt-5 bg-green-600 hover:bg-green-700 p-4 rounded-2xl font-bold"
-              >
-                ✅ Approve User
-              </button>
-
-              <button
-                onClick={() =>
-                  handleDeleteRequest(item.id)
-                }
-                className="w-full mt-3 bg-red-600 hover:bg-red-700 p-4 rounded-2xl font-bold"
-              >
-                🗑 Delete Request
-              </button>
-
-            </div>
-
-          ))}
 
         </div>
 

@@ -27,6 +27,26 @@ function PlayerContent() {
 
     }
 
+    /* Vimeo - already an embed link (player.vimeo.com/video/xxxx) */
+    if (url.includes("player.vimeo.com/video/")) {
+
+      return url
+
+    }
+
+    /* Vimeo - normal share link (vimeo.com/xxxx) */
+    if (url.includes("vimeo.com/")) {
+
+      const match = url.match(/vimeo\.com\/(\d+)/)
+
+      if (match && match[1]) {
+
+        return `https://player.vimeo.com/video/${match[1]}`
+
+      }
+
+    }
+
     /* YouTube watch link */
     if (url.includes("youtube.com/watch?v=")) {
 
@@ -110,7 +130,7 @@ function PlayerContent() {
           <iframe
             src={getEmbedUrl(decodeURIComponent(videoUrl))}
             className="w-full h-[500px]"
-            allow="autoplay; encrypted-media"
+            allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
             allowFullScreen
           />
 

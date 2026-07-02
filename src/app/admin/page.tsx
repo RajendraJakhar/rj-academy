@@ -333,6 +333,12 @@ export default function AdminPage() {
             </button>
           </Link>
 
+          <Link href="/admin/popup">
+            <button className="w-full bg-zinc-900 border border-zinc-800 hover:border-pink-500 p-5 rounded-3xl text-left font-bold">
+              🔔 Manage Support Popup
+            </button>
+          </Link>
+
         </div>
 
       </div>

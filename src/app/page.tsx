@@ -4,6 +4,8 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Sidebar from "../components/Sidebar"
+import SupportSection from "../components/SupportSection"
+import SupportPopup from "../components/SupportPopup"
 import { supabase } from "@/lib/supabase"
 
 export default function Home() {
@@ -97,6 +99,9 @@ export default function Home() {
 
     <main className="min-h-screen bg-black text-white overflow-hidden relative">
 
+      {/* SUPPORT POPUP — admin controlled, checks Supabase on mount */}
+      <SupportPopup />
+
       {/* BACKGROUND GLOW */}
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-700/20 blur-[150px] rounded-full"></div>
 
@@ -180,122 +185,66 @@ export default function Home() {
       {/* MAIN */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-6">
 
-        {/* HERO SECTION */}
+        {/* HERO SECTION — minimal */}
         <div
-          className="relative overflow-hidden rounded-[40px] p-8 lg:p-14 shadow-2xl border border-white/10 bg-cover bg-center"
-
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, rgba(0,0,0,0.92), rgba(0,0,0,0.45)), url('/hero.jpg')"
-          }}
+          className="relative overflow-hidden rounded-[24px] p-5 sm:p-6 shadow-2xl border border-white/10 bg-gradient-to-br from-zinc-900 via-black to-purple-950/40"
         >
 
           {/* GLOW */}
-          <div className="absolute top-0 right-0 w-72 h-72 bg-yellow-500/10 blur-[120px] rounded-full"></div>
+          <div className="absolute top-0 right-0 w-56 h-56 bg-yellow-500/10 blur-[100px] rounded-full"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-600/10 blur-[90px] rounded-full"></div>
 
-          <div className="relative z-10 max-w-3xl">
+          <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-stretch justify-center gap-5 sm:gap-10">
 
-            {/* TOP TAG */}
-            <div className="inline-block bg-black/40 border border-yellow-500/30 px-5 py-2 rounded-full text-sm font-bold mb-6 backdrop-blur-md">
+            {/* LEFT — exam names */}
+            <div className="flex flex-col justify-center">
 
-              INDIA'S TRUSTED DEFENCE PLATFORM
+              <p className="text-zinc-500 text-[11px] font-bold tracking-[3px] uppercase mb-2">
+                Prepare For
+              </p>
+
+              <div className="flex flex-wrap gap-2">
+
+                {["NDA", "CDS", "AFCAT", "SSB"].map((exam) => (
+
+                  <span
+                    key={exam}
+                    className="bg-white/5 border border-purple-500/30 text-white text-sm sm:text-base font-black px-4 py-2 rounded-xl"
+                  >
+                    {exam}
+                  </span>
+
+                ))}
+
+              </div>
 
             </div>
 
-            {/* MAIN TITLE */}
-            <h2 className="text-5xl md:text-7xl font-black leading-tight">
+            {/* DIVIDER */}
+            <div className="hidden sm:block w-px bg-white/10"></div>
+            <div className="sm:hidden h-px w-full bg-white/10"></div>
 
-              <span className="text-white">
-                DREAM UNIFORM.
-              </span>
+            {/* RIGHT — stats */}
+            <div className="flex flex-wrap justify-center sm:justify-start gap-2 sm:gap-2.5">
 
-              <br />
-
-              <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-                BUILD YOUR ERA.
-              </span>
-
-            </h2>
-
-            {/* SUBTITLE */}
-            <p className="text-zinc-300 mt-6 text-lg md:text-2xl leading-relaxed max-w-2xl">
-
-              Comprehensive preparation for NDA,
-              CDS, AFCAT, SSB Interview and all
-              Defence Exams.
-
-            </p>
-
-            {/* BUTTONS */}
-            <div className="flex flex-wrap gap-4 mt-10">
-
-              {/* COURSE BUTTON */}
-              <button
-                className="bg-gradient-to-r from-purple-600 to-blue-500 hover:scale-105 transition-all px-8 py-4 rounded-2xl font-black shadow-[0_0_30px_rgba(168,85,247,0.5)]"
-              >
-                EXPLORE COURSES
-              </button>
-
-              {/* WHATSAPP */}
-              <a
-                href="https://whatsapp.com/channel/0029VbDYZFFAjPXOkyYSID3K/320"
-                target="_blank"
-                className="bg-black/40 border border-purple-500 hover:bg-purple-500/10 transition-all px-8 py-4 rounded-2xl font-black"
-              >
-                JOIN WHATSAPP
-              </a>
-
-            </div>
-
-            {/* STATS */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
-
-              <div className="bg-black/40 backdrop-blur-md border border-white/10 p-5 rounded-3xl">
-
-                <h3 className="text-4xl font-black text-yellow-400">
-                  10K+
-                </h3>
-
-                <p className="text-zinc-300 mt-2">
-                  Students
-                </p>
-
+              <div className="bg-black/40 backdrop-blur-md border border-white/10 px-3 py-2 rounded-xl text-center w-[86px]">
+                <h3 className="text-base font-black text-yellow-400">10K+</h3>
+                <p className="text-zinc-400 text-[10px]">Students</p>
               </div>
 
-              <div className="bg-black/40 backdrop-blur-md border border-white/10 p-5 rounded-3xl">
-
-                <h3 className="text-4xl font-black text-purple-400">
-                  500+
-                </h3>
-
-                <p className="text-zinc-300 mt-2">
-                  Notes
-                </p>
-
+              <div className="bg-black/40 backdrop-blur-md border border-white/10 px-3 py-2 rounded-xl text-center w-[86px]">
+                <h3 className="text-base font-black text-purple-400">500+</h3>
+                <p className="text-zinc-400 text-[10px]">Notes</p>
               </div>
 
-              <div className="bg-black/40 backdrop-blur-md border border-white/10 p-5 rounded-3xl">
-
-                <h3 className="text-4xl font-black text-blue-400">
-                  50+
-                </h3>
-
-                <p className="text-zinc-300 mt-2">
-                  Mentors
-                </p>
-
+              <div className="bg-black/40 backdrop-blur-md border border-white/10 px-3 py-2 rounded-xl text-center w-[86px]">
+                <h3 className="text-base font-black text-blue-400">50+</h3>
+                <p className="text-zinc-400 text-[10px]">Mentors</p>
               </div>
 
-              <div className="bg-black/40 backdrop-blur-md border border-white/10 p-5 rounded-3xl">
-
-                <h3 className="text-4xl font-black text-green-400">
-                  24/7
-                </h3>
-
-                <p className="text-zinc-300 mt-2">
-                  Support
-                </p>
-
+              <div className="bg-black/40 backdrop-blur-md border border-white/10 px-3 py-2 rounded-xl text-center w-[86px]">
+                <h3 className="text-base font-black text-green-400">24/7</h3>
+                <p className="text-zinc-400 text-[10px]">Support</p>
               </div>
 
             </div>
@@ -304,24 +253,12 @@ export default function Home() {
 
         </div>
 
-        {/* SEARCH */}
+        {/* SUPPORT SECTION — compact, sits right below Hero, above Search */}
         <div className="mt-10">
-
-          <div className="bg-white/5 border border-purple-500/20 backdrop-blur-xl rounded-[30px] p-3">
-
-            <input
-              type="text"
-              placeholder="Search your batch..."
-              value={search}
-              onChange={(e) =>
-                setSearch(e.target.value)
-              }
-              className="w-full bg-transparent text-white placeholder:text-zinc-500 outline-none px-4 py-4 text-lg"
-            />
-
-          </div>
-
+          <SupportSection />
         </div>
+
+        
 
         {/* COURSES */}
         <div className="mt-10">

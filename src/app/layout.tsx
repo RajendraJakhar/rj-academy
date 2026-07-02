@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import VisitorTracker from "@/components/VisitorTracker";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +30,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         {/* Tracks every visitor across the website */}
-        <VisitorTracker />
+        
 
         {children}
       </body>

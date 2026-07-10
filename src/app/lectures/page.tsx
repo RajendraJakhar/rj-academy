@@ -37,6 +37,7 @@ function LecturesContent() {
     const { data, error } = await supabase
       .from("lectures")
       .select("*")
+      .order("lecture_number", { ascending: true })
 
     if (error) {
 

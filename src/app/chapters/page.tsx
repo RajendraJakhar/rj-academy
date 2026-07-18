@@ -5,6 +5,16 @@ import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { supabase } from "@/lib/supabase"
 
+// Cycling premium color themes + icons — every card feels distinct
+const THEMES = [
+  { grad: "from-purple-600 to-blue-500", glowRgb: "168,85,247", ring: "hover:border-purple-500", icon: "📘" },
+  { grad: "from-pink-500 to-rose-500", glowRgb: "236,72,153", ring: "hover:border-pink-500", icon: "📕" },
+  { grad: "from-emerald-500 to-teal-500", glowRgb: "16,185,129", ring: "hover:border-emerald-500", icon: "📗" },
+  { grad: "from-amber-500 to-orange-500", glowRgb: "245,158,11", ring: "hover:border-amber-500", icon: "📙" },
+  { grad: "from-sky-500 to-cyan-500", glowRgb: "14,165,233", ring: "hover:border-sky-500", icon: "📔" },
+  { grad: "from-fuchsia-500 to-violet-500", glowRgb: "217,70,239", ring: "hover:border-fuchsia-500", icon: "📓" },
+]
+
 function ChaptersContent() {
 
   const router = useRouter()
@@ -14,7 +24,7 @@ function ChaptersContent() {
   const subjectName = searchParams.get("subject")
 
   const [chapters, setChapters] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
 
@@ -68,43 +78,53 @@ function ChaptersContent() {
 
       </div>
 
-      {/* PURPLE GLOW */}
+      {/* GLOW */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-purple-600 blur-[140px] opacity-20 rounded-full"></div>
 
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-pink-600 blur-[140px] opacity-20 rounded-full"></div>
 
-      <div className="relative z-10 px-4 pb-10">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600 blur-[160px] opacity-[0.07] rounded-full"></div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-5">
 
         {/* HEADER */}
-        <div className="sticky top-0 z-50 bg-black/70 backdrop-blur-xl border-b border-purple-500/20">
+        <div className="sticky top-0 z-50 bg-black/50 backdrop-blur-xl border border-purple-500/20 rounded-2xl md:rounded-3xl px-3 md:px-5 py-2.5 md:py-4 flex items-center justify-between mb-5 md:mb-8 shadow-[0_4px_25px_rgba(168,85,247,0.1)]">
 
-          <div className="max-w-7xl mx-auto py-4 flex items-center gap-4">
+          {/* LEFT */}
+          <div className="flex items-center gap-3 md:gap-4 min-w-0">
 
-            {/* BACK BUTTON */}
             <button
               onClick={() => router.back()}
-              className="w-14 h-14 rounded-2xl bg-gradient-to-r from-zinc-900 to-zinc-800 border border-zinc-700 flex items-center justify-center text-2xl hover:border-purple-500 transition-all shadow-lg"
+              className="w-9 h-9 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-black/40 backdrop-blur-xl border border-zinc-700 hover:border-purple-500 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] transition-all text-lg md:text-xl shrink-0"
             >
               ←
             </button>
 
-            {/* TITLE */}
-            <div className="flex-1">
+            <div className="min-w-0">
 
-              <h1 className="text-3xl md:text-5xl font-black bg-gradient-to-r from-purple-400 via-pink-500 to-blue-500 bg-clip-text text-transparent tracking-wide">
+              <h1 className="text-lg md:text-3xl font-black bg-gradient-to-r from-purple-400 via-pink-500 to-blue-500 bg-clip-text text-transparent tracking-wide truncate drop-shadow-[0_0_20px_rgba(168,85,247,0.2)]">
                 CHAPTERS
               </h1>
 
-              <p className="text-zinc-400 tracking-[4px] text-xs md:text-sm mt-1 uppercase">
-                {subjectName}
-              </p>
+              {!loading && (
+                <p className="text-zinc-500 text-[10px] md:text-xs tracking-[3px] uppercase font-semibold">
+                  {chapters.length} Available
+                </p>
+              )}
 
             </div>
 
-            {/* LOGO */}
+          </div>
+
+          {/* RIGHT */}
+          <div className="relative shrink-0">
+
+            <div className="absolute inset-0 bg-purple-500/20 blur-lg rounded-full"></div>
+
             <img
               src="/images/logo.png"
-              className="w-14 h-14 md:w-16 md:h-16 object-contain"
+              alt="Defence Era"
+              className="relative w-9 h-9 md:w-12 md:h-12 object-contain"
             />
 
           </div>
@@ -114,9 +134,22 @@ function ChaptersContent() {
         {/* LOADING */}
         {loading && (
 
-          <div className="flex justify-center items-center py-20">
+          <div className="flex flex-col gap-3">
 
-            <div className="w-14 h-14 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+            {[1,2,3,4,5,6].map((item) => (
+
+              <div
+                key={item}
+                className="animate-pulse bg-black/40 backdrop-blur-xl border border-zinc-800 rounded-2xl p-3 md:p-4 h-[60px] md:h-[76px] flex items-center gap-3 md:gap-4"
+              >
+
+                <div className="w-9 h-9 md:w-12 md:h-12 rounded-xl bg-zinc-800 shrink-0"></div>
+
+                <div className="h-4 md:h-5 w-40 md:w-56 bg-zinc-800 rounded"></div>
+
+              </div>
+
+            ))}
 
           </div>
 
@@ -125,99 +158,128 @@ function ChaptersContent() {
         {/* CHAPTERS */}
         {!loading && (
 
-          <div className="max-w-7xl mx-auto mt-8">
+          <>
 
             {chapters.length === 0 ? (
 
-              <div className="bg-zinc-900/80 border border-zinc-800 rounded-3xl p-10 text-center text-zinc-400 backdrop-blur-xl">
-                No Chapters Found 😭
+              <div className="bg-black/40 backdrop-blur-xl border border-zinc-800 rounded-[32px] p-10 text-center">
+
+                <h2 className="text-3xl font-bold text-zinc-300">
+                  No Chapters Found 😭
+                </h2>
+
+                <p className="text-zinc-500 mt-3">
+                  Chapters not uploaded yet.
+                </p>
+
               </div>
 
             ) : (
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+              <div className="flex flex-col gap-3">
 
-                {chapters.map((item) => (
+                {chapters.map((item, index) => {
 
-                  <Link
-                    key={item.id}
-                    href={`/lectures?course=${courseName}&subject=${subjectName}&chapter=${item.chapter}`}
-                  >
+                  const theme = THEMES[index % THEMES.length]
 
-                    <div className="group relative overflow-hidden rounded-[30px] border border-zinc-800 bg-black/60 backdrop-blur-xl hover:border-purple-500 transition-all duration-300 p-5 cursor-pointer">
+                  return (
 
-                      {/* CARD GLOW */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-all"></div>
+                    <Link
+                      key={item.id}
+                      href={`/lectures?course=${courseName}&subject=${subjectName}&chapter=${item.chapter}`}
+                      className="group block cursor-pointer animate-[fadeSlideIn_0.4s_ease-out_both]"
+                      style={{ animationDelay: `${index * 60}ms` }}
+                    >
 
-                      {/* TOP */}
-                      <div className="relative flex items-start justify-between">
+                      {/* CARD */}
+                      <div
+                        className={`relative flex items-center gap-3 md:gap-4 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-white/[0.04] to-white/[0.01] backdrop-blur-xl ${theme.ring} transition-all duration-500 px-3.5 py-2.5 md:px-5 md:py-4 hover:-translate-y-0.5`}
+                        style={{
+                          boxShadow: "none",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.boxShadow = `0 8px 30px -8px rgba(${theme.glowRgb},0.5)`
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.boxShadow = "none"
+                        }}
+                      >
 
-                        <div className="w-16 h-16 rounded-3xl bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center text-3xl shadow-[0_0_25px_#7c3aed]">
+                        {/* TOP SHEEN */}
+                        <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
-                          📖
+                        {/* HOVER GLOW WASH */}
+                        <div
+                          className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500"
+                          style={{ background: `linear-gradient(120deg, transparent, rgba(${theme.glowRgb},0.12), transparent)` }}
+                        ></div>
+
+                        {/* ICON */}
+                        <div
+                          className={`relative w-9 h-9 md:w-12 md:h-12 rounded-xl bg-gradient-to-br ${theme.grad} flex items-center justify-center text-base md:text-xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shrink-0`}
+                          style={{ boxShadow: `0 0 18px rgba(${theme.glowRgb},0.5)` }}
+                        >
+
+                          {theme.icon}
 
                         </div>
 
-                        <div className="text-4xl text-purple-400 group-hover:translate-x-1 transition-all">
-                          →
-                        </div>
-
-                      </div>
-
-                      {/* TITLE */}
-                      <div className="relative mt-6">
-
-                        <h2 className="text-2xl font-black leading-tight text-white group-hover:text-purple-300 transition-all">
+                        {/* NAME */}
+                        <h2 className="relative text-sm md:text-lg font-bold text-white leading-tight transition-all truncate flex-1">
 
                           {item.chapter}
 
                         </h2>
 
-                        <p className="text-zinc-400 text-sm mt-3 leading-relaxed">
-
-                          Explore premium lectures, notes & important concepts.
-
-                        </p>
-
-                      </div>
-
-                      {/* BOTTOM */}
-                      <div className="relative mt-6 flex items-center justify-between">
-
-                        <div className="px-4 py-2 rounded-full bg-zinc-800 text-[11px] tracking-[3px] text-zinc-300 uppercase border border-zinc-700">
-                          Defence Era
-                        </div>
-
-                        <div className="text-green-400 font-bold text-sm">
-                          Active
+                        {/* INDEX BADGE */}
+                        <div className="relative shrink-0 w-6 h-6 md:w-8 md:h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[10px] md:text-xs font-bold text-zinc-500 group-hover:text-white group-hover:border-white/30 transition-all">
+                          {String(index + 1).padStart(2, "0")}
                         </div>
 
                       </div>
 
-                    </div>
+                    </Link>
 
-                  </Link>
+                  )
 
-                ))}
+                })}
 
               </div>
 
             )}
 
-          </div>
+          </>
 
         )}
 
         {/* FOOTER */}
-        <div className="text-center mt-16 pb-8">
+        <div className="mt-16 text-center pb-8">
 
-          <p className="text-zinc-500 text-xs tracking-[8px] uppercase">
-            Defence Era Premium Platform
-          </p>
+          <div className="inline-flex items-center gap-2">
+            <span className="h-px w-8 bg-gradient-to-r from-transparent to-zinc-700"></span>
+            <p className="text-zinc-500 tracking-[6px] uppercase text-xs">
+              Defence Era Premium Platform
+            </p>
+            <span className="h-px w-8 bg-gradient-to-l from-transparent to-zinc-700"></span>
+          </div>
 
         </div>
 
       </div>
+
+      {/* Keyframes for card entrance (no external animation library needed) */}
+      <style jsx global>{`
+        @keyframes fadeSlideIn {
+          from {
+            opacity: 0;
+            transform: translateY(14px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
 
     </main>
   )
@@ -229,11 +291,27 @@ export default function ChaptersPage() {
 
     <Suspense
       fallback={
+
         <div className="min-h-screen bg-black flex items-center justify-center">
 
-          <div className="w-14 h-14 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="flex flex-col items-center gap-5">
+
+            <div className="relative">
+
+              <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
+
+              <div className="absolute inset-0 w-16 h-16 rounded-full bg-purple-500 blur-2xl opacity-30"></div>
+
+            </div>
+
+            <p className="text-zinc-300 tracking-[6px] uppercase text-sm animate-pulse">
+              Loading Chapters
+            </p>
+
+          </div>
 
         </div>
+
       }
     >
 

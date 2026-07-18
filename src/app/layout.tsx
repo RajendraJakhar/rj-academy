@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import MaintenanceGate from "../components/MaintenanceGate";
 
 
 const geistSans = Geist({
@@ -32,7 +33,7 @@ export default function RootLayout({
         {/* Tracks every visitor across the website */}
         
 
-        {children}
+        <MaintenanceGate>{children}</MaintenanceGate>
       </body>
     </html>
   );

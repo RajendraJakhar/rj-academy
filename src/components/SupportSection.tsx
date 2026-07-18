@@ -7,11 +7,11 @@ import Link from "next/link";
 /**
  * SupportSection
  * -----------------------------------------------------------------------
- * Compact support strip for the HOMEPAGE ONLY.
- * Placement: directly BELOW the Hero section, ABOVE the Search box.
+ * MOBILE (< lg): compact, text-free card — same footprint as a single
+ * course card. Whole card is a link to /support.
  *
- * Does NOT touch: Navbar, Hero, Course Cards.
- * Height target: ~160–220px on desktop, auto on mobile.
+ * DESKTOP (>= lg): original rich two-column strip with full copy,
+ * trust row, and both CTAs — unchanged.
  * -----------------------------------------------------------------------
  */
 
@@ -19,13 +19,48 @@ const TELEGRAM_LINK = "https://t.me/+fb_amz94Q_o5Njk1";
 
 export default function SupportSection() {
   return (
-    <section className="w-full px-4 sm:px-6 lg:px-8 mt-6 mb-8">
+    <section className="w-full mt-6 mb-8">
+      {/* ============== MOBILE / TABLET — compact, course-card sized ============== */}
+      <Link href="/support" className="block lg:hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="
+            group relative overflow-hidden
+            rounded-2xl border border-white/10
+            bg-white/[0.03] backdrop-blur-xl
+            shadow-[0_0_30px_-10px_rgba(168,85,247,0.35)]
+            active:scale-[0.98] transition-transform duration-200
+            px-4 py-4 flex items-center gap-3.5
+          "
+        >
+          {/* ambient glow */}
+          <div className="pointer-events-none absolute -top-10 -right-10 h-32 w-32 rounded-full bg-fuchsia-600/20 blur-3xl" />
+
+          <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 flex items-center justify-center shrink-0 shadow-[0_0_16px_rgba(217,70,239,0.5)]">
+            <Heart className="h-5 w-5 text-white" fill="currentColor" />
+          </div>
+
+          <h2 className="relative flex-1 min-w-0 text-sm font-bold text-white truncate">
+            Support Defence Era
+          </h2>
+
+          <div className="relative w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 group-hover:border-pink-400/40 transition-all">
+            <span className="text-pink-400 text-sm">→</span>
+          </div>
+        </motion.div>
+      </Link>
+
+      {/* ============== DESKTOP — full rich strip ============== */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-40px" }}
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="
+          hidden lg:block
           relative overflow-hidden
           max-w-6xl mx-auto
           rounded-[32px]
@@ -42,9 +77,9 @@ export default function SupportSection() {
         {/* Animated border glow on hover */}
         <div className="pointer-events-none absolute inset-0 rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[linear-gradient(120deg,transparent,rgba(217,70,239,0.15),transparent)]" />
 
-        <div className="relative flex flex-col lg:flex-row items-stretch">
+        <div className="relative flex flex-row items-stretch">
           {/* ---------------- LEFT (70%) ---------------- */}
-          <div className="flex-1 lg:basis-[70%] p-6 sm:p-7 lg:p-8 flex flex-col justify-center">
+          <div className="flex-1 basis-[70%] p-6 lg:p-8 flex flex-col justify-center">
             {/* Badge */}
             <div className="inline-flex w-fit items-center gap-1.5 mb-3 rounded-full border border-pink-400/20 bg-pink-500/10 px-3 py-1 text-[11px] font-semibold tracking-wide text-pink-300">
               <Heart className="h-3 w-3 fill-pink-400 text-pink-400" />
@@ -84,11 +119,10 @@ export default function SupportSection() {
           </div>
 
           {/* Divider */}
-          <div className="hidden lg:block w-px bg-white/10 my-6" />
-          <div className="lg:hidden h-px bg-white/10 mx-6" />
+          <div className="block w-px bg-white/10 my-6" />
 
           {/* ---------------- RIGHT (30%) ---------------- */}
-          <div className="flex-1 lg:basis-[30%] p-6 sm:p-7 lg:p-8 flex flex-col justify-center gap-3">
+          <div className="flex-1 basis-[30%] p-6 lg:p-8 flex flex-col justify-center gap-3">
             <div className="flex items-center gap-2 text-white font-semibold text-sm">
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-pink-500 to-purple-600 shadow-[0_0_16px_rgba(217,70,239,0.5)]">
                 <Gift className="h-4 w-4 text-white" />
@@ -102,7 +136,7 @@ export default function SupportSection() {
               PhonePe Gift Card
             </p>
 
-            <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5 mt-1">
+            <div className="flex flex-col gap-2.5 mt-1">
               {/* Support Now -> /support */}
               <Link href="/support" className="w-full">
                 <button

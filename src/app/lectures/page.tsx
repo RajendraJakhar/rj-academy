@@ -5,6 +5,16 @@ import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 
+// Cycling premium color themes — every lecture card feels distinct
+const THEMES = [
+  { grad: "from-purple-600 to-blue-500", glowRgb: "168,85,247", ring: "hover:border-purple-500" },
+  { grad: "from-pink-500 to-rose-500", glowRgb: "236,72,153", ring: "hover:border-pink-500" },
+  { grad: "from-emerald-500 to-teal-500", glowRgb: "16,185,129", ring: "hover:border-emerald-500" },
+  { grad: "from-amber-500 to-orange-500", glowRgb: "245,158,11", ring: "hover:border-amber-500" },
+  { grad: "from-sky-500 to-cyan-500", glowRgb: "14,165,233", ring: "hover:border-sky-500" },
+  { grad: "from-fuchsia-500 to-violet-500", glowRgb: "217,70,239", ring: "hover:border-fuchsia-500" },
+]
+
 function LecturesContent() {
 
   const router = useRouter()
@@ -89,39 +99,46 @@ function LecturesContent() {
 
       <div className="absolute bottom-0 right-0 w-[450px] h-[450px] bg-blue-600 blur-[140px] opacity-20 rounded-full"></div>
 
-      <div className="relative z-10 px-4 pb-24">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-pink-600 blur-[160px] opacity-[0.06] rounded-full"></div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-5 pb-24">
 
         {/* HEADER */}
-        <div className="sticky top-0 z-50 bg-black/70 backdrop-blur-xl border-b border-purple-500/20">
+        <div className="sticky top-0 z-50 bg-black/40 backdrop-blur-xl border border-purple-500/20 rounded-2xl md:rounded-3xl px-3 md:px-5 py-2.5 md:py-4 flex items-center justify-between mb-5 md:mb-8 shadow-[0_4px_25px_rgba(168,85,247,0.1)]">
 
-          <div className="max-w-7xl mx-auto py-4 flex items-center gap-4">
+          {/* LEFT */}
+          <div className="flex items-center gap-3 md:gap-4">
 
-            {/* BACK */}
             <button
               onClick={() => router.back()}
-              className="w-14 h-14 rounded-2xl bg-zinc-900 border border-zinc-700 hover:border-purple-500 transition-all text-2xl"
+              className="w-9 h-9 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-black/40 backdrop-blur-xl border border-zinc-700 hover:border-purple-500 hover:-translate-y-1 hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] transition-all text-lg md:text-xl shrink-0"
             >
               ←
             </button>
 
-            {/* TITLE */}
-            <div className="flex-1">
+            <div>
 
-              <h1 className="text-3xl md:text-5xl font-black bg-gradient-to-r from-purple-400 via-pink-500 to-blue-500 bg-clip-text text-transparent">
+              <h1 className="text-lg md:text-3xl font-black bg-gradient-to-r from-purple-400 via-pink-500 to-blue-500 bg-clip-text text-transparent tracking-wide drop-shadow-[0_0_20px_rgba(168,85,247,0.2)]">
                 LECTURES
               </h1>
 
-              <p className="text-green-400 text-xs md:text-sm tracking-[4px] uppercase mt-1 font-bold">
+              <p className="text-green-400 text-[10px] md:text-xs tracking-[3px] uppercase font-bold">
                 ● {lectures.length} Classes Found
               </p>
 
             </div>
 
-            {/* LOGO */}
+          </div>
+
+          {/* RIGHT */}
+          <div className="relative shrink-0">
+
+            <div className="absolute inset-0 bg-purple-500/20 blur-lg rounded-full"></div>
+
             <img
               src="/images/logo.png"
               alt="logo"
-              className="w-14 h-14 object-contain"
+              className="relative w-9 h-9 md:w-12 md:h-12 object-contain"
             />
 
           </div>
@@ -139,7 +156,7 @@ function LecturesContent() {
 
         ) : lectures.length === 0 ? (
 
-          <div className="mt-10 bg-zinc-900 border border-zinc-800 rounded-[32px] p-10 text-center">
+          <div className="mt-2 bg-black/40 backdrop-blur-xl border border-zinc-800 rounded-[32px] p-10 text-center">
 
             <h2 className="text-3xl font-bold text-zinc-300">
               No Lectures Found
@@ -153,125 +170,106 @@ function LecturesContent() {
 
         ) : (
 
-          <div className="max-w-7xl mx-auto mt-8 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="flex flex-col gap-3 md:gap-4">
 
-            {lectures.map((item) => (
+            {lectures.map((item, index) => {
 
-              <div
-                key={item.id}
-                className="group overflow-hidden rounded-[32px] border border-zinc-800 bg-gradient-to-br from-zinc-900 to-black hover:border-purple-500 hover:-translate-y-2 hover:shadow-[0_0_35px_rgba(168,85,247,0.35)] transition-all duration-500"
-              >
+              const theme = THEMES[index % THEMES.length]
 
-                {/* THUMBNAIL */}
-                <div className="relative overflow-hidden">
+              return (
 
-                  <img
-                    src={
-                      item.thumbnail ||
-                      "/images/hotelbatch.jpg"
-                    }
-                    alt="lecture"
-                    className="w-full h-56 object-cover group-hover:scale-110 transition-all duration-700"
-                  />
+                <div
+                  key={item.id}
+                  className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-white/[0.04] to-white/[0.01] backdrop-blur-xl ${theme.ring} hover:-translate-y-0.5 transition-all duration-500 px-3.5 py-3 md:px-5 md:py-4 animate-[fadeSlideIn_0.4s_ease-out_both]`}
+                  style={{ animationDelay: `${index * 60}ms` }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = `0 8px 30px -8px rgba(${theme.glowRgb},0.35)`
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = "none"
+                  }}
+                >
 
-                  {/* OVERLAY */}
-                  <div className="absolute inset-0 bg-black/35"></div>
+                  {/* TOP SHEEN */}
+                  <div className="pointer-events-none absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
 
-                  {/* PLAY BUTTON */}
-                  <div className="absolute inset-0 flex items-center justify-center">
+                  {/* HOVER GLOW WASH */}
+                  <div
+                    className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500"
+                    style={{ background: `linear-gradient(120deg, transparent, rgba(${theme.glowRgb},0.1), transparent)` }}
+                  ></div>
 
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center text-3xl shadow-[0_0_30px_rgba(168,85,247,0.6)] group-hover:scale-110 transition-all duration-500">
+                  <div className="relative flex flex-col md:flex-row md:items-center gap-3">
 
-                      ▶
+                    <div className="flex items-center gap-3 md:gap-4 md:flex-1 min-w-0">
+
+                      {/* ICON */}
+                      <div
+                        className={`w-9 h-9 md:w-12 md:h-12 rounded-xl bg-gradient-to-br ${theme.grad} flex items-center justify-center text-base md:text-xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shrink-0`}
+                        style={{ boxShadow: `0 0 15px rgba(${theme.glowRgb},0.45)` }}
+                      >
+
+                        🎥
+
+                      </div>
+
+                      {/* TITLE */}
+                      <h2 className="flex-1 min-w-0 text-sm md:text-lg font-bold text-white leading-tight transition-all truncate">
+
+                        {item.title}
+
+                      </h2>
 
                     </div>
 
-                  </div>
+                    {/* BUTTONS */}
+                    <div className="grid grid-cols-2 md:flex md:items-center gap-2 md:gap-3 shrink-0">
 
-                  {/* HD BADGE */}
-                  <div className="absolute top-4 right-4 bg-black/80 backdrop-blur-xl border border-white/10 px-4 py-2 rounded-2xl text-xs font-bold tracking-[2px]">
-
-                    HD
-
-                  </div>
-
-                </div>
-
-                {/* CONTENT */}
-                <div className="p-5">
-
-                  <h2 className="text-2xl font-black text-white leading-tight group-hover:text-purple-300 transition-all">
-
-                    {item.title}
-
-                  </h2>
-
-                  <p className="text-zinc-400 text-sm mt-3">
-
-                    Premium Defence Lecture
-
-                  </p>
-
-                  {/* BUTTONS */}
-                  <div className="grid grid-cols-2 gap-4 mt-6">
-
-                    {/* WATCH */}
-                    <Link
-                      href={`/player?video=${encodeURIComponent(item.video_url)}`}
-                    >
-
-                      <button className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:scale-105 transition-all duration-300 py-4 rounded-2xl font-bold shadow-[0_0_25px_rgba(168,85,247,0.35)]">
-
-                        ▶ Watch
-
-                      </button>
-
-                    </Link>
-
-                    {/* NOTES */}
-                    {item.pdf_url &&
-                    item.pdf_url !== "A" ? (
-
-                      <a
-                        href={item.pdf_url}
-                        target="_blank"
+                      {/* WATCH */}
+                      <Link
+                        href={`/player?video=${encodeURIComponent(item.video_url)}`}
                       >
 
-                        <button className="w-full bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 transition-all duration-300 py-4 rounded-2xl font-bold">
+                        <button
+                          className={`w-full bg-gradient-to-r ${theme.grad} hover:scale-105 transition-all duration-300 px- py-2.5 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap`}
+                          style={{ boxShadow: `0 0 15px rgba(${theme.glowRgb},0.3)` }}
+                        >
 
-                          📄 Notes
+                          ▶ Watch
 
                         </button>
 
-                      </a>
+                      </Link>
 
-                    ) : (
+                      {/* NOTES */}
+                      {item.pdf_url &&
+                      item.pdf_url !== "A" ? (
 
-                      <button
-                        disabled
-                        className="w-full bg-zinc-900 border border-zinc-800 py-4 rounded-2xl font-bold text-zinc-500"
-                      >
+                        <a
+                          href={item.pdf_url}
+                          target="_blank"
+                        >
 
-                        📄 No Notes
+                          <button className="w-full bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 transition-all duration-300 px-3 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-bold whitespace-nowrap">
 
-                      </button>
+                            📄 Notes
 
-                    )}
+                          </button>
 
-                  </div>
+                        </a>
 
-                  {/* FOOTER */}
-                  <div className="mt-6 flex items-center justify-between">
+                      ) : (
 
-                    <div className="px-4 py-2 rounded-full bg-zinc-800 border border-zinc-700 text-[11px] tracking-[3px] uppercase text-zinc-300">
+                        <button
+                          disabled
+                          className="w-full bg-zinc-900 border border-zinc-800 px-3 py-2 md:px-5 md:py-2.5 rounded-xl text-xs md:text-sm font-bold text-zinc-500 whitespace-nowrap"
+                        >
 
-                      Defence Era
+                          📄 No Notes
 
-                    </div>
+                        </button>
 
-                    <div className="text-green-400 font-bold text-sm">
-
-                      Active
+                      )}
 
                     </div>
 
@@ -279,9 +277,9 @@ function LecturesContent() {
 
                 </div>
 
-              </div>
+              )
 
-            ))}
+            })}
 
           </div>
 
@@ -290,15 +288,31 @@ function LecturesContent() {
         {/* FOOTER */}
         <div className="text-center mt-16">
 
-          <p className="text-zinc-500 text-xs tracking-[8px] uppercase">
-
-            Defence Era Premium Platform
-
-          </p>
+          <div className="inline-flex items-center gap-2">
+            <span className="h-px w-8 bg-gradient-to-r from-transparent to-zinc-700"></span>
+            <p className="text-zinc-500 text-xs tracking-[8px] uppercase">
+              Defence Era Premium Platform
+            </p>
+            <span className="h-px w-8 bg-gradient-to-l from-transparent to-zinc-700"></span>
+          </div>
 
         </div>
 
       </div>
+
+      {/* Keyframes for card entrance (pure CSS, no external animation library) */}
+      <style jsx global>{`
+        @keyframes fadeSlideIn {
+          from {
+            opacity: 0;
+            transform: translateY(14px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
 
     </main>
 

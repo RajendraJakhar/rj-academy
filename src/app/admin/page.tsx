@@ -22,6 +22,10 @@ export default function AdminPage() {
   const [activeUsers, setActiveUsers] = useState(0)
   const [blockedUsers, setBlockedUsers] = useState(0)
 
+  // MAINTENANCE MODE
+  const [maintenance, setMaintenance] = useState(false)
+  const [maintenanceLoading, setMaintenanceLoading] = useState(false)
+
   // ✅ ADMIN PASSWORD
   const SECRET_PASSWORD = "RJ@Admin2026"
 
@@ -42,6 +46,8 @@ export default function AdminPage() {
       setIsUnlocked(true)
 
       fetchStats()
+
+      fetchMaintenance()
 
     }
 
@@ -87,6 +93,64 @@ export default function AdminPage() {
 
     setActiveUsers(active?.length || 0)
     setBlockedUsers(blocked?.length || 0)
+
+  }
+
+  // ✅ FETCH MAINTENANCE STATUS
+  const fetchMaintenance = async () => {
+
+    const { data, error } = await supabase
+      .from("site_settings")
+      .select("*")
+      .eq("id", 1)
+      .single()
+
+    if (!error && data) {
+
+      setMaintenance(data.maintenance === true)
+
+    }
+
+  }
+
+  // ✅ TOGGLE MAINTENANCE — turat website band/chalu
+  const toggleMaintenance = async () => {
+
+    const turningOn = !maintenance
+
+    if (turningOn) {
+
+      const sure = confirm(
+        "Website turant sabhi students ke liye BAND ho jayegi. Admin panel chalta rahega. Pakka?"
+      )
+
+      if (!sure) return
+
+    }
+
+    setMaintenanceLoading(true)
+
+    const { error } = await supabase
+      .from("site_settings")
+      .update({
+        maintenance: turningOn,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", 1)
+
+    if (error) {
+
+      console.log(error)
+
+      alert("Toggle failed: " + error.message)
+
+    } else {
+
+      setMaintenance(turningOn)
+
+    }
+
+    setMaintenanceLoading(false)
 
   }
 
@@ -136,6 +200,8 @@ export default function AdminPage() {
     setIsUnlocked(true)
 
     fetchStats()
+
+    fetchMaintenance()
 
     setLoading(false)
 
@@ -235,6 +301,59 @@ export default function AdminPage() {
 
       </div>
 
+      {/* ⚠️ MAINTENANCE MODE */}
+      <div
+        className={`mb-6 rounded-3xl border p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all ${
+          maintenance
+            ? "border-red-500/50 bg-red-500/10"
+            : "border-zinc-800 bg-zinc-900"
+        }`}
+      >
+
+        <div>
+
+          <h2 className="text-lg font-black flex items-center gap-2">
+
+            🛠️ Website Maintenance Mode
+
+            {maintenance && (
+              <span className="text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse">
+                Live — Site Band Hai
+              </span>
+            )}
+
+          </h2>
+
+          <p className="text-zinc-400 text-sm mt-1">
+
+            {maintenance
+              ? "Students ko abhi maintenance screen dikh rahi hai. Admin panel chalu hai."
+              : "On karte hi puri website students ke liye turant band ho jayegi."}
+
+          </p>
+
+        </div>
+
+        <button
+          onClick={toggleMaintenance}
+          disabled={maintenanceLoading}
+          className={`shrink-0 px-6 py-3 rounded-2xl font-bold transition-all disabled:opacity-50 ${
+            maintenance
+              ? "bg-gradient-to-r from-green-500 to-emerald-500 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]"
+              : "bg-gradient-to-r from-red-500 to-orange-500 hover:shadow-[0_0_20px_rgba(239,68,68,0.4)]"
+          }`}
+        >
+
+          {maintenanceLoading
+            ? "Updating..."
+            : maintenance
+            ? "✅ Website Chalu Karo"
+            : "🚫 Website Band Karo"}
+
+        </button>
+
+      </div>
+
       {/* ANALYTICS */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
 
@@ -324,6 +443,12 @@ export default function AdminPage() {
           <Link href="/admin/lectures">
             <button className="w-full bg-zinc-900 border border-zinc-800 hover:border-yellow-500 p-5 rounded-3xl text-left font-bold">
               🎥 Manage Lectures
+            </button>
+          </Link>
+
+          <Link href="/admin/exams">
+            <button className="w-full bg-zinc-900 border border-zinc-800 hover:border-orange-500 p-5 rounded-3xl text-left font-bold">
+              🎯 Manage Exam Countdown
             </button>
           </Link>
 
